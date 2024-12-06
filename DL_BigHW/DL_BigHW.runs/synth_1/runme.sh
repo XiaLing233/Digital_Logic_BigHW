@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/WorkSpace/Homework_Digital_Logic/DL_BigHW/DL_BigHW.runs/synth_1'
+HD_PWD='C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
@@ -40,4 +40,4 @@ EAStep()
      fi
 }
 
-EAStep vivado -log display7.vds -m64 -mode batch -messageDb vivado.pb -notrace -source display7.tcl
+EAStep vivado -log temperature_control.vds -m64 -mode batch -messageDb vivado.pb -notrace -source temperature_control.tcl

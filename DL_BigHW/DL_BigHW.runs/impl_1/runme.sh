@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/WorkSpace/Homework_Digital_Logic/DL_BigHW/DL_BigHW.runs/impl_1'
+HD_PWD='C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
@@ -41,7 +41,7 @@ EAStep()
 }
 
 # pre-commands:
-/bin/touch .write_bitstream.begin.rst
-EAStep vivado -log display7.vdi -applog -m64 -messageDb vivado.pb -mode batch -source display7.tcl -notrace
+/bin/touch .init_design.begin.rst
+EAStep vivado -log temperature_control.vdi -applog -m64 -messageDb vivado.pb -mode batch -source temperature_control.tcl -notrace
 
 

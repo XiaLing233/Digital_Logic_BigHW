@@ -23,7 +23,7 @@ eval( EAInclude(ISEJScriptLib) );
 
 
 ISEStep( "vivado",
-         "-log display7.vds -m64 -mode batch -messageDb vivado.pb -notrace -source display7.tcl" );
+         "-log temperature_control.vds -m64 -mode batch -messageDb vivado.pb -notrace -source temperature_control.tcl" );
 
 
 

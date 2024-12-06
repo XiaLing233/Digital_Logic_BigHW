@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1733470670">
-  <File Type="OPT-DCP" Name="display7_opt.dcp"/>
-  <File Type="ROUTE-STATUS-PB" Name="display7_route_status.pb"/>
-  <File Type="PA-TCL" Name="display7.tcl"/>
-  <File Type="RDI-RDI" Name="display7.vdi"/>
-  <File Type="PWROPT-DRC" Name="display7_drc_pwropted.rpt"/>
-  <File Type="OPT-METHODOLOGY-DRC" Name="display7_methodology_drc_opted.rpt"/>
-  <File Type="INIT-TIMING" Name="display7_timing_summary_init.rpt"/>
-  <File Type="OPT-DRC" Name="display7_drc_opted.rpt"/>
-  <File Type="PWROPT-DCP" Name="display7_pwropt.dcp"/>
-  <File Type="OPT-HWDEF" Name="display7.hwdef"/>
-  <File Type="OPT-TIMING" Name="display7_timing_summary_opted.rpt"/>
-  <File Type="PWROPT-TIMING" Name="display7_timing_summary_pwropted.rpt"/>
-  <File Type="PLACE-DCP" Name="display7_placed.dcp"/>
-  <File Type="PLACE-IO" Name="display7_io_placed.rpt"/>
-  <File Type="PLACE-CLK" Name="display7_clock_utilization_placed.rpt"/>
-  <File Type="PLACE-UTIL" Name="display7_utilization_placed.rpt"/>
-  <File Type="PLACE-UTIL-PB" Name="display7_utilization_placed.pb"/>
-  <File Type="PLACE-CTRL" Name="display7_control_sets_placed.rpt"/>
-  <File Type="PLACE-SIMILARITY" Name="display7_incremental_reuse_placed.rpt"/>
-  <File Type="PLACE-PRE-SIMILARITY" Name="display7_incremental_reuse_pre_placed.rpt"/>
-  <File Type="PLACE-TIMING" Name="display7_timing_summary_placed.rpt"/>
-  <File Type="POSTPLACE-PWROPT-DCP" Name="display7_postplace_pwropt.dcp"/>
-  <File Type="POSTPLACE-PWROPT-TIMING" Name="display7_timing_summary_postplace_pwropted.rpt"/>
-  <File Type="PHYSOPT-DCP" Name="display7_physopt.dcp"/>
-  <File Type="PHYSOPT-DRC" Name="display7_drc_physopted.rpt"/>
-  <File Type="PHYSOPT-TIMING" Name="display7_timing_summary_physopted.rpt"/>
-  <File Type="ROUTE-DCP" Name="display7_routed.dcp"/>
-  <File Type="ROUTE-BLACKBOX-DCP" Name="display7_routed_bb.dcp"/>
-  <File Type="ROUTE-DRC" Name="display7_drc_routed.rpt"/>
-  <File Type="ROUTE-DRC-PB" Name="display7_drc_routed.pb"/>
-  <File Type="ROUTE-METHODOLOGY-DRC" Name="display7_methodology_drc_routed.rpt"/>
-  <File Type="BG-BIT" Name="display7.bit"/>
-  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="display7_methodology_drc_routed.pb"/>
-  <File Type="ROUTE-PWR" Name="display7_power_routed.rpt"/>
-  <File Type="ROUTE-PWR-SUM" Name="display7_power_summary_routed.pb"/>
-  <File Type="ROUTE-PWR-RPX" Name="display7_power_routed.rpx"/>
-  <File Type="ROUTE-STATUS" Name="display7_route_status.rpt"/>
-  <File Type="ROUTE-TIMINGSUMMARY" Name="display7_timing_summary_routed.rpt"/>
-  <File Type="ROUTE-TIMING-PB" Name="display7_timing_summary_routed.pb"/>
-  <File Type="ROUTE-TIMING-RPX" Name="display7_timing_summary_routed.rpx"/>
-  <File Type="ROUTE-SIMILARITY" Name="display7_incremental_reuse_routed.rpt"/>
-  <File Type="ROUTE-CLK" Name="display7_clock_utilization_routed.rpt"/>
-  <File Type="POSTROUTE-PHYSOPT-DCP" Name="display7_postroute_physopt.dcp"/>
-  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="display7_postroute_physopt_bb.dcp"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="display7_timing_summary_postroute_physopted.rpt"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="display7_timing_summary_postroute_physopted.pb"/>
-  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="display7_timing_summary_postroute_physopted.rpx"/>
-  <File Type="BG-BIN" Name="display7.bin"/>
-  <File Type="BITSTR-MSK" Name="display7.msk"/>
-  <File Type="BITSTR-RBT" Name="display7.rbt"/>
-  <File Type="BITSTR-NKY" Name="display7.nky"/>
-  <File Type="BITSTR-BMM" Name="display7_bd.bmm"/>
-  <File Type="BITSTR-MMI" Name="display7.mmi"/>
-  <File Type="BITSTR-SYSDEF" Name="display7.sysdef"/>
-  <File Type="BG-BGN" Name="display7.bgn"/>
-  <File Type="BG-DRC" Name="display7.drc"/>
+<GenRun Id="impl_1" LaunchPart="xc7a100tcsg324-1" LaunchTime="1733500641">
+  <File Type="OPT-DCP" Name="temperature_control_opt.dcp"/>
+  <File Type="ROUTE-STATUS-PB" Name="temperature_control_route_status.pb"/>
+  <File Type="PA-TCL" Name="temperature_control.tcl"/>
+  <File Type="RDI-RDI" Name="temperature_control.vdi"/>
+  <File Type="PWROPT-DRC" Name="temperature_control_drc_pwropted.rpt"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="temperature_control_methodology_drc_opted.rpt"/>
+  <File Type="INIT-TIMING" Name="temperature_control_timing_summary_init.rpt"/>
+  <File Type="OPT-DRC" Name="temperature_control_drc_opted.rpt"/>
+  <File Type="PWROPT-DCP" Name="temperature_control_pwropt.dcp"/>
+  <File Type="OPT-HWDEF" Name="temperature_control.hwdef"/>
+  <File Type="OPT-TIMING" Name="temperature_control_timing_summary_opted.rpt"/>
+  <File Type="PWROPT-TIMING" Name="temperature_control_timing_summary_pwropted.rpt"/>
+  <File Type="PLACE-DCP" Name="temperature_control_placed.dcp"/>
+  <File Type="PLACE-IO" Name="temperature_control_io_placed.rpt"/>
+  <File Type="PLACE-CLK" Name="temperature_control_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL" Name="temperature_control_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="temperature_control_utilization_placed.pb"/>
+  <File Type="PLACE-CTRL" Name="temperature_control_control_sets_placed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="temperature_control_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-PRE-SIMILARITY" Name="temperature_control_incremental_reuse_pre_placed.rpt"/>
+  <File Type="PLACE-TIMING" Name="temperature_control_timing_summary_placed.rpt"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="temperature_control_postplace_pwropt.dcp"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="temperature_control_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="temperature_control_physopt.dcp"/>
+  <File Type="PHYSOPT-DRC" Name="temperature_control_drc_physopted.rpt"/>
+  <File Type="PHYSOPT-TIMING" Name="temperature_control_timing_summary_physopted.rpt"/>
+  <File Type="ROUTE-DCP" Name="temperature_control_routed.dcp"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="temperature_control_routed_bb.dcp"/>
+  <File Type="ROUTE-DRC" Name="temperature_control_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-PB" Name="temperature_control_drc_routed.pb"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="temperature_control_methodology_drc_routed.rpt"/>
+  <File Type="BG-BIT" Name="temperature_control.bit"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="temperature_control_methodology_drc_routed.pb"/>
+  <File Type="ROUTE-PWR" Name="temperature_control_power_routed.rpt"/>
+  <File Type="ROUTE-PWR-SUM" Name="temperature_control_power_summary_routed.pb"/>
+  <File Type="ROUTE-PWR-RPX" Name="temperature_control_power_routed.rpx"/>
+  <File Type="ROUTE-STATUS" Name="temperature_control_route_status.rpt"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="temperature_control_timing_summary_routed.rpt"/>
+  <File Type="ROUTE-TIMING-PB" Name="temperature_control_timing_summary_routed.pb"/>
+  <File Type="ROUTE-TIMING-RPX" Name="temperature_control_timing_summary_routed.rpx"/>
+  <File Type="ROUTE-SIMILARITY" Name="temperature_control_incremental_reuse_routed.rpt"/>
+  <File Type="ROUTE-CLK" Name="temperature_control_clock_utilization_routed.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-DCP" Name="temperature_control_postroute_physopt.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="temperature_control_postroute_physopt_bb.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="temperature_control_timing_summary_postroute_physopted.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="temperature_control_timing_summary_postroute_physopted.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="temperature_control_timing_summary_postroute_physopted.rpx"/>
+  <File Type="BG-BIN" Name="temperature_control.bin"/>
+  <File Type="BITSTR-MSK" Name="temperature_control.msk"/>
+  <File Type="BITSTR-RBT" Name="temperature_control.rbt"/>
+  <File Type="BITSTR-NKY" Name="temperature_control.nky"/>
+  <File Type="BITSTR-BMM" Name="temperature_control_bd.bmm"/>
+  <File Type="BITSTR-MMI" Name="temperature_control.mmi"/>
+  <File Type="BITSTR-SYSDEF" Name="temperature_control.sysdef"/>
+  <File Type="BG-BGN" Name="temperature_control.bgn"/>
+  <File Type="BG-DRC" Name="temperature_control.drc"/>
   <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
@@ -68,7 +68,13 @@
     </File>
     <File Path="$PSRCDIR/sources_1/new/sel_display7.v">
       <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/tmp_init.v">
+      <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -90,23 +96,16 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
-    <File Path="$PSRCDIR/sources_1/new/tmp_init.v">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
     <Config>
       <Option Name="DesignMode" Val="RTL"/>
-      <Option Name="TopModule" Val="display7"/>
+      <Option Name="TopModule" Val="temperature_control"/>
     </Config>
   </FileSet>
   <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
     <Filter Type="Constrs"/>
     <File Path="$PSRCDIR/constrs_1/new/display7.xdc">
       <FileInfo>
+        <Attr Name="UserDisabled" Val="1"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
       </FileInfo>
@@ -118,14 +117,19 @@
         <Attr Name="UsedIn" Val="implementation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/constrs_1/new/init_tmp_tb.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
     <Config>
+      <Option Name="TargetConstrsFile" Val="$PSRCDIR/constrs_1/new/init_tmp_tb.xdc"/>
       <Option Name="ConstrsType" Val="XDC"/>
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016">
-      <Desc>Default settings for Implementation.</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2016"/>
     <Step Id="init_design"/>
     <Step Id="opt_design"/>
     <Step Id="power_opt_design"/>

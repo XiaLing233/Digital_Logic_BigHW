@@ -5,7 +5,8 @@ module combine_display7(
     input [2:0] sel,
     input [39:0] iData,
     input [7:0] isDot,
-    output [7:0] oData
+    output [7:0] oData,
+    output [7:0] set
 );
 
 wire o_clk;
@@ -20,7 +21,8 @@ sel_display7 uut2 (
     .sel(sel),
     .iData(iData),
     .isDot(isDot),
-    .oData(oData)
+    .oData(oData),
+    .set(set) // 居然丢了这句，抽象..
 );
 
 endmodule
@@ -31,7 +33,7 @@ module display7_divider(
     output reg o_clk    // 480Hz 的输出
 );
 
-parameter DIVIDE = 208333; // 100MHz / 480Hz / 2 = 208333。记住要 /2。
+parameter DIVIDE = 104167; // 100MHz / 480Hz / 2 = 104167。记住要 /2。算法是：原频率 / 新频率 / 2
 integer i = 0;
 
 always @ (posedge i_clk)
@@ -53,23 +55,26 @@ module sel_display7(
     input [2:0] sel,            // 选择的位置，0 ~ 7，高电平有效。被选中的会闪烁。如果数值在 0 ~ 7 以外，则没有闪烁，保持常亮显示，不过也不可能在 0 ~ 7 以外
     input [39:0] iData,         // 七段数码管的输入，套壳
     input [7:0] isDot,          // 七段数码管的输入，套壳
-    output [7:0] oData          // . & g ~ a，低电平表示选中
+    output [7:0] oData,          // . & g ~ a，低电平表示选中
+    output reg [7:0] set            // 硬件约束，选择的数码管！自己 i 热闹了，硬件呢？？？用时序，组合会延迟一位，不好
 );
 
 reg [4:0] sel_iData; // 被选中的，要传送到七段数码管的 iData
 reg sel_isDot;       // 被选中的，要传送到七段数码管的 isDot
 integer i = 0;       // 循环计数的变量，模 8
 integer term_i = 0;  // 记录跳过了多少次时钟
-parameter term = 60; // 60Hz，表示要暗 1s
+parameter term = 60; // 60Hz，表示要亮 0.5s，暗 0.5s
 
 display7 uut (
     .iData(sel_iData),
-    .isDot(sel_isDot), // 这里要注意，isDot 在逻辑上的真假和数码管的显示是相反的，注意取反。如，isDot == 1，如果要显示 .，应该取低电平
+    .isDot(sel_isDot), // 这里要注意，isDot 在逻辑上的真假和数码管的显示是相反的，但是底层已经处理好了，display7 已经做了这部分工作！
     .oData(oData)
 );
 
 always @ (posedge clk)
 begin
+    set <= ~(8'h01 << i); // 非阻塞 需要对硬件进行约束啊！必须，必须，必须放到时序里！
+
     if (i != sel) // 正常显示
     begin
         case (i)
@@ -83,12 +88,12 @@ begin
             7: sel_iData <= iData[39:35];
             default: sel_iData <= 5'b00000;
         endcase // 从 i*5 开始，向左选 5 位
-        sel_isDot <= ~isDot[i];
+        sel_isDot <= isDot[i];
     end
 
     else // 忽略一段时间
     begin
-        if (term_i == 0) // 跳过了一定的周期，这样设置可以确保一开始也是亮的
+        if (term_i <= term / 2) // 类似于占空比吧
         begin
             case (i)
                 0: sel_iData <= iData[4:0];
@@ -101,12 +106,12 @@ begin
                 7: sel_iData <= iData[39:35];
                 default: sel_iData <= 5'b00000;
             endcase // 这里和上面的内容是一样的
-            sel_isDot <= ~isDot[i];
+            sel_isDot <= isDot[i];
         end
         else
         begin
-            sel_iData <= 5'b1000;    // 空，读一下 README 里的编码表
-            sel_isDot <= ~0;          // 不要显示 .
+            sel_iData <= 5'b10000;    // 空，读一下 README 里的编码表
+            sel_isDot <= 0;          // 不要显示 .
         end
 
         term_i <= (term_i + 1) % term;

@@ -1,0 +1,275 @@
+#-----------------------------------------------------------
+# Vivado v2016.2 (64-bit)
+# SW Build 1577090 on Thu Jun  2 16:32:40 MDT 2016
+# IP Build 1577682 on Fri Jun  3 12:00:54 MDT 2016
+# Start of session at: Fri Dec 06 21:33:31 2024
+# Process ID: 33016
+# Current directory: C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent48356 C:\WorkSpace\Homework_Digital_Logic\Digital_Logic_BigHW\DL_BigHW\DL_BigHW.xpr
+# Log file: C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/vivado.log
+# Journal file: C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.xpr
+update_compile_order -fileset sources_1
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+launch_simulation -install_path C:/WorkSpace/ModelSim/win32pe -noclean_dir
+set_property is_enabled false [get_files  C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.srcs/constrs_1/new/display7.xdc]
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+open_run synth_1 -name synth_1
+close_design
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+open_run synth_1 -name synth_1
+set_property IOSTANDARD LVCMOS18 [get_ports [list {ideal_temp[8]} {ideal_temp[7]} {ideal_temp[6]} {ideal_temp[5]} {ideal_temp[4]} {ideal_temp[3]} {ideal_temp[2]} {ideal_temp[1]} {ideal_temp[0]}]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list {ideal_temp[8]}]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list {oData[7]} {oData[6]} {oData[5]} {oData[4]} {oData[3]} {oData[2]} {oData[1]} {oData[0]}]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list {oData[7]}]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list {temp_offset[5]} {temp_offset[4]} {temp_offset[3]} {temp_offset[2]} {temp_offset[1]} {temp_offset[0]}]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list btn_dec]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list btn_inc]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list btn_left]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list btn_right]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list btn_save]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list clk]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list rst]]
+set_property IOSTANDARD LVCMOS18 [get_ports [list set_done]]
+place_ports btn_dec P18
+place_ports btn_inc M18
+place_ports btn_left P17
+place_ports btn_right M17
+place_ports btn_save N17
+place_ports clk E3
+place_ports rst V10
+place_ports set_done V11
+place_ports {oData[7]} H15
+place_ports {oData[6]} L18
+place_ports {oData[5]} T11
+place_ports {oData[4]} A8
+place_ports {oData[4]} P15
+place_ports {oData[3]} K13
+place_ports {oData[2]} K16
+place_ports {oData[1]} R10
+place_ports {oData[0]} T10
+place_ports {temp_offset[5]} R18
+set_property is_loc_fixed false [get_ports [list  {temp_offset[4]}]]
+place_ports {temp_offset[4]} N14
+place_ports {temp_offset[3]} J13
+place_ports {temp_offset[2]} K15
+place_ports {temp_offset[1]} H17
+place_ports {ideal_temp[0]} V17
+place_ports {ideal_temp[1]} U17
+place_ports {ideal_temp[2]} U16
+place_ports {ideal_temp[3]} V16
+place_ports {ideal_temp[4]} T15
+place_ports {ideal_temp[5]} U14
+place_ports {ideal_temp[6]} T16
+place_ports {ideal_temp[7]} V15
+place_ports {ideal_temp[8]} V14
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[1]}]]
+place_ports {temp_offset[0]} H17
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[2]}]]
+place_ports {temp_offset[1]} K15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[3]}]]
+place_ports {temp_offset[2]} J13
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[4]}]]
+place_ports {temp_offset[3]} N14
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[5]}]]
+place_ports {temp_offset[4]} R18
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[0]}]]
+place_ports {temp_offset[5]} T10
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[1]}]]
+place_ports {oData[0]} R10
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[2]}]]
+place_ports {oData[1]} K16
+endgroup
+place_ports {oData[2]} K1
+place_ports {oData[2]} A8
+place_ports {oData[2]} A9
+startgroup
+set_property package_pin "" [get_ports [list  {oData[4]}]]
+place_ports {oData[3]} P15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[5]}]]
+place_ports {oData[4]} T11
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[6]}]]
+place_ports {oData[5]} L18
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[7]}]]
+place_ports {oData[6]} H15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[0]}]]
+place_ports {oData[7]} V17
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[6]}]]
+place_ports {oData[7]} H15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[5]}]]
+place_ports {oData[6]} L18
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[4]}]]
+place_ports {oData[5]} T11
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[3]}]]
+place_ports {oData[4]} P15
+endgroup
+place_ports {oData[3]} K13
+startgroup
+set_property package_pin "" [get_ports [list  {oData[1]}]]
+place_ports {oData[2]} K16
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {oData[0]}]]
+place_ports {oData[1]} R10
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {temp_offset[5]}]]
+place_ports {oData[0]} T10
+endgroup
+place_ports {temp_offset[5]} V17
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[1]}]]
+place_ports {ideal_temp[0]} U17
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[2]}]]
+place_ports {ideal_temp[1]} U16
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[3]}]]
+place_ports {ideal_temp[2]} V16
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[4]}]]
+place_ports {ideal_temp[3]} T15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[5]}]]
+place_ports {ideal_temp[4]} U14
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[6]}]]
+place_ports {ideal_temp[5]} T16
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[7]}]]
+place_ports {ideal_temp[6]} V15
+endgroup
+startgroup
+set_property package_pin "" [get_ports [list  {ideal_temp[8]}]]
+place_ports {ideal_temp[7]} V14
+endgroup
+place_ports {ideal_temp[8]} V12
+close [ open C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.srcs/constrs_1/new/init_tmp_tb.xdc w ]
+add_files -fileset constrs_1 C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.srcs/constrs_1/new/init_tmp_tb.xdc
+set_property target_constrs_file C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.srcs/constrs_1/new/init_tmp_tb.xdc [current_fileset -constrset]
+save_constraints -force
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+launch_runs impl_1
+wait_on_run impl_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+open_hw
+connect_hw_server
+open_hw_target
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+current_hw_device [lindex [get_hw_devices] 0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices] 0]
+set_property PROBES.FILE {} [lindex [get_hw_devices] 0]
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+program_hw_devices [lindex [get_hw_devices] 0]
+refresh_hw_device [lindex [get_hw_devices] 0]
+close_hw
+close_design
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+open_hw
+connect_hw_server
+open_hw_target
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+current_hw_device [lindex [get_hw_devices] 0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices] 0]
+set_property PROBES.FILE {} [lindex [get_hw_devices] 0]
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+program_hw_devices [lindex [get_hw_devices] 0]
+refresh_hw_device [lindex [get_hw_devices] 0]
+open_run synth_1 -name synth_1
+close_design
+close_hw
+reset_run synth_1
+launch_runs synth_1
+wait_on_run synth_1
+open_run synth_1 -name synth_1
+set_property IOSTANDARD LVCMOS18 [get_ports [list {set[7]} {set[6]} {set[5]} {set[4]} {set[3]} {set[2]} {set[1]} {set[0]}]]
+place_ports {set[7]} U13
+place_ports {set[6]} K2
+place_ports {set[5]} T14
+place_ports {set[4]} P14
+place_ports {set[3]} J14
+place_ports {set[2]} T9
+place_ports {set[1]} J18
+place_ports {set[0]} J17
+save_constraints
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+open_hw
+connect_hw_server
+open_hw_target
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+current_hw_device [lindex [get_hw_devices] 0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices] 0]
+set_property PROBES.FILE {} [lindex [get_hw_devices] 0]
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+program_hw_devices [lindex [get_hw_devices] 0]
+refresh_hw_device [lindex [get_hw_devices] 0]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
+set_property PROBES.FILE {} [lindex [get_hw_devices] 0]
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+program_hw_devices [lindex [get_hw_devices] 0]
+refresh_hw_device [lindex [get_hw_devices] 0]
+set_property PROBES.FILE {} [lindex [get_hw_devices] 0]
+set_property PROGRAM.FILE {C:/WorkSpace/Homework_Digital_Logic/Digital_Logic_BigHW/DL_BigHW/DL_BigHW.runs/impl_1/temperature_control.bit} [lindex [get_hw_devices] 0]
+program_hw_devices [lindex [get_hw_devices] 0]
+refresh_hw_device [lindex [get_hw_devices] 0]
+reset_run synth_1
+launch_runs impl_1 -to_step write_bitstream
+wait_on_run impl_1
