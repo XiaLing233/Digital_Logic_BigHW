@@ -1,0 +1,12 @@
+# do {sel_display7_tb_simulate.do}
+# vsim -voptargs=""+acc"" -L unisims_ver -L unimacro_ver -L secureip -L xil_defaultlib -lib xil_defaultlib xil_defaultlib.sel_display7_tb xil_defaultlib.glbl 
+# Start time: 15:00:50 on Dec 06,2024
+# Loading xil_defaultlib.sel_display7_tb
+# Loading xil_defaultlib.sel_display7
+# Loading xil_defaultlib.display7
+# Loading xil_defaultlib.glbl
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+# End time: 15:31:50 on Dec 06,2024, Elapsed time: 0:31:00
+# Errors: 0, Warnings: 0
