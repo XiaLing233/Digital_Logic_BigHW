@@ -1,3 +1,56 @@
+// 使用分频后的时钟，对外的接口
+module combine_sensor(
+    input clk,
+    input start,
+    inout data_wire,
+    output reg [15:0] temp,
+    output reg [15:0] humi,
+    output reg is_done
+);
+
+wire o_clk;
+
+    sensor_divider uut1 (
+        .i_clk(clk),
+        .o_clk(o_clk)
+    );
+
+    tmp_hum_sensor uut2(
+        .clk(o_clk),
+        .start(start),
+        .data_wire(data_wire),
+        .temp(temp),
+        .humi(humi),
+        .is_done(is_done)
+    );
+
+endmodule
+
+
+// 对系统时钟分频
+module sensor_divider(
+    input i_clk,    // 100MHz 的输入
+    output reg o_clk    // 1MHz 的输出
+);
+
+parameter DIVIDE = 50; // 100MHz / 1 MHz / 2 = 50。记住要 /2。算法是：原频率 / 新频率 / 2
+integer i = 0;
+
+always @ (posedge i_clk)
+begin
+    if (i == DIVIDE - 1)
+    begin
+        i <= 0;
+        o_clk <= ~o_clk;
+    end
+    else
+    begin
+        i <= i + 1;
+    end
+end
+endmodule
+
+// 传感器逻辑
 module tmp_hum_sensor(
     input clk,              // 时钟，分频后的，周期为 1 MHz，这样一周期就对应 1us
     input start,            // 给一个开始的信号，高电平开始
@@ -14,29 +67,29 @@ integer counter;                    // 记录经过了多少个时钟周期，�
 assign data_wire = data_wire_out;   // 绑定输出
 
 // 定义等待的秒数
-parameter START_HIGH = 2000000; // 2s
-parameter START_LOW = 1000; // 1000us = 1ms
-parameter SLAVE_RESPONSE_1 = 20; // 20us
-parameter SLAVE_RESPONSE_2 = 80; // 80us
-parameter ZERO_ONE_DIVIDE = 40; // 40us，留一些冗余，来判断 0 / 1
-parameter ERROR_RESTART = 1000000; // 1s
+parameter START_HIGH = 2000000;             // 2s
+parameter START_LOW = 1000;                 // 1000us = 1ms
+parameter SLAVE_RESPONSE_1 = 20;            // 20us
+parameter SLAVE_RESPONSE_2 = 80;            // 80us
+parameter ZERO_ONE_DIVIDE = 40;             // 40us，留一些冗余，来判断 0 / 1
+parameter ERROR_RESTART = 1000000;          // 1s
 
 // 定义状态
 localparam [3:0]
-    IDLE = 4'd0,
-    START_HIGH_STATE = 4'd1,
-    START_LOW_STATE = 4'd2,
-    SLAVE_RESPONSE_1_STATE = 4'd3,
-    SLAVE_RESPONSE_2_STATE = 4'd4,
-    READ_DATA = 4'd5,
-    CHECK_DATA = 4'd6,
-    DONE = 4'd7,
-    ERROR = 4'd8;
+    IDLE = 4'd0,                        // 闲置状态
+    START_HIGH_STATE = 4'd1,            // 输出高电平
+    START_LOW_STATE = 4'd2,             // 输出低电平
+    SLAVE_RESPONSE_1_STATE = 4'd3,      // 接收高电平
+    SLAVE_RESPONSE_2_STATE = 4'd4,      // 接收低电平
+    READ_DATA = 4'd5,                   // 读数据
+    CHECK_DATA = 4'd6,                  // 验证校验位
+    DONE = 4'd7,                        // 完成
+    ERROR = 4'd8;                       // 出错
 
 reg [3:0] state, next_state;
 
 // 状态转移逻辑
-always @(posedge clk or negedge start)
+always @(posedge clk) // 同步复位
 begin
     if (!start)
     begin
@@ -48,6 +101,7 @@ begin
     end
 end
 
+// 状态转移条件
 always @(*)
 begin
     next_state <= state; // 如果没有转移下一个状态，在当前状态空转
@@ -135,6 +189,7 @@ begin
     endcase
 end
 
+// 某状态操作
 always @(posedge clk)
 begin
     case (state)
@@ -208,5 +263,4 @@ begin
         end
     endcase
 end
-
 endmodule

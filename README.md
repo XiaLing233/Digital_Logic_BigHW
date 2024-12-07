@@ -187,6 +187,20 @@ VCC 和 GND 就不说了，对于串口而言，设置为 inout，因为只有�
 
 后端响应前端发出的 `time_type`（见下），该如何向数据库中请求内容呢？可能需要用 `SQL` 语句的查询语法，如 `GROUP BY` 等等。
 
+后端的配置流程如下：
+
+```bash
+> mkdir myproject
+> cd myproject
+> py -3 -m venv .venv # 先创建一个虚拟环境
+
+> .venv\Scripts\activate # 激活环境
+
+> pip install flask # 在环境中安装 flask
+
+# 后续可以安装 mysql 支持等等
+```
+
 #### 前端
 
 前端向后端请求内容，用 `POST`，我想初步搞成那种，过去 24 小时，过去一周这种的类型。传送的 `json` 格式为：
@@ -206,7 +220,25 @@ VCC 和 GND 就不说了，对于串口而言，设置为 inout，因为只有�
     "status": "OK" | "Warning" | "Error";
 ```
 
-前端打算还是用 `vue3`，后端用 `Flask`，这次前端的框架可以换个新的，试试 `vuetify`。
+前端打算还是用 `vue3`，后端用 `Flask`，这次前端的框架可以换个新的，试试 `ant design`。
+
+整个的配置流程是这样的，先新建一个文件夹，比如叫 `vue`，当然也可以不新建，因为新生成的 `vue` 项目会新建一个文件夹。
+
+```bash
+npm create vue@latest
+# 进行项目的设置（略）
+cd project-name
+npm install
+```
+
+这样，一个基本的 `vue` 项目就建成了。可以通过 `npm run dev` 来看看默认的前端页面。
+
+如果要安装其他东西，比如对图标的支持，或者 `UI`，则需要在对应的官网上查看安装方法。一般都会支持 `npm` 包管理器：
+
+```bash
+npm install vue-chartjs chart.js # 对图表的支持，后者是底层，前者是底层的 vue 化支持
+npm install ant-design-vue@4.x --save # 安装 ant design 的 UI
+```
 
 #### 数据库
 
