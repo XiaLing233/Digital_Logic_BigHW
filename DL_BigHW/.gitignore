@@ -1,10 +1,10 @@
 *.log
 *.jou
 
-/*.runs
-/*.sim
-/*.cache
-/*.hw
-/*.ioplanning
-/*.ip_user_files
-/.Xil
+*.runs/
+*.sim/
+*.cache/
+*.hw/
+*.ioplanning/
+*.ip_user_files/
+.Xil/
