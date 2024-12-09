@@ -1,13 +1,15 @@
 <script>
-
+    export default {
+        name: 'Welcome',
+    }
 </script>
 
 <template>
     <div class="welcome-container">
         <div id = "welcome">
         <a-card id="wel-box">
-            <h1>欢迎查询温湿度历史信息！ :bordered="flase"</h1>
-            <p>请点击右上方导航栏进行操作</p>
+            <p>欢迎查询温湿度历史信息！</p>
+            <p>请操作左侧导航栏</p>
         </a-card>
     </div>
     </div>
@@ -25,10 +27,9 @@
 
     .welcome-container {
         background-image: url('../assets/welcome_bg_2.webp');
-        /* background-image: url('../assets/welcome_bg.png'); */
         background-size: cover;
         background-position: center;
-        height: calc(100vh - 140px);
+        height: calc(100vh - 160px);
         width: 100%;
     }
 

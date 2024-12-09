@@ -5,6 +5,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, Ca
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 export default {
+    name: 'Table',
     components: {
     LineChart: Line
   },
@@ -18,26 +19,26 @@ export default {
     },
 
     methods: {
-        fetchData() {
-            // 向后端请求数据
-            fetch('api/data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    type: this.sel_type,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                this.data = data.data;
-                this.status = data.status;
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+        // fetchData() {
+        //     // 向后端请求数据
+        //     fetch('api/data', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({
+        //             type: this.sel_type,
+        //         }),
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         this.data = data.data;
+        //         this.status = data.status;
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+        // }
     },
 }
 
@@ -45,5 +46,6 @@ export default {
 </script>
 
 <template>
-    <LineChart />
+    <!-- <LineChart /> -->
+    <h1>Hello World!</h1>
 </template>
