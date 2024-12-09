@@ -196,8 +196,8 @@ begin
         IDLE:
         begin
             is_done <= 0;
-            temp <= 16'b0;
-            humi <= 16'b0;
+            // temp <= 16'b0; // IDLE 的时候，保持原样不变
+            // humi <= 16'b0;
             data_storage <= 40'b0;
             data_wire_out <= 1'b1;
             counter <= 0;
