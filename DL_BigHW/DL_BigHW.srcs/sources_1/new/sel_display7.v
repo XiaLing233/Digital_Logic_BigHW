@@ -2,7 +2,7 @@
 
 module combine_display7(
     input clk,
-    input [2:0] sel,
+    input [3:0] sel,
     input [39:0] iData,
     input [7:0] isDot,
     output [7:0] oData,
@@ -52,7 +52,7 @@ endmodule
 
 module sel_display7(
     input clk,                  // 分频后的时钟，达到 60Hz 的刷新率，那也就是 480Hz 吧
-    input [2:0] sel,            // 选择的位置，0 ~ 7，高电平有效。被选中的会闪烁。如果数值在 0 ~ 7 以外，则没有闪烁，保持常亮显示，不过也不可能在 0 ~ 7 以外
+    input [3:0] sel,            // 选择的位置，0 ~ 7，高电平有效。被选中的会闪烁。如果数值在 0 ~ 7 以外，则没有闪烁，保持常亮显示，一般用 1111 表示
     input [39:0] iData,         // 七段数码管的输入，套壳
     input [7:0] isDot,          // 七段数码管的输入，套壳
     output [7:0] oData,          // . & g ~ a，低电平表示选中

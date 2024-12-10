@@ -2,7 +2,7 @@
 // 利用的原理是 PWM 调节占空比
 
 module tri_LED(
-    input clk,             // 时钟信号
+    input clk,             // 时钟信号，系统时钟就好了
     input [23:0] rgb,      // 三色在一起，从高到低是 R G B
     output reg pwm_red,    // PWM 红色输出
     output reg pwm_green,  // PWM 绿色输出

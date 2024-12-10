@@ -46,7 +46,7 @@ reg btn_inc_prev, btn_dec_prev, btn_left_prev, btn_right_prev, btn_save_prev;
 
 combine_display7 uut ( // 下板用 分频
     .clk(clk),
-    .sel({1'b0, sel}),
+    .sel({2'b00, sel}),
     .iData(seg_out),
     .isDot(8'h02),   // 写死，就低到高第二个需要.
     .oData(oData),
@@ -106,7 +106,7 @@ begin
                 SET_TEMP:
                 begin
                     // 温度设置显示逻辑
-                    seg_out[39:20] <= 20'b10111100001000010000; // T...
+                    seg_out[39:20] <= 20'hBC210; // T...
                     seg_out[19:15] <= 5'b10000; // 空位
                     seg_out[14:10] <= (ideal_temp / 100) % 10;  // 百位
                     seg_out[9:5] <= (ideal_temp / 10) % 10;     // 十位

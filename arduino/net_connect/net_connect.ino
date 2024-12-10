@@ -58,6 +58,10 @@ void setup()
 void loop()
 {
   uint8_t receivedData[7]; // 存储接收到的字节数据
+  uint16_t temperature = 0;
+  uint16_t humidity = 0;
+  uint16_t ideal_tmp = 0;
+  uint8_t diff = 0;
 
   // 读取数据
   if (Serial2.available() >= 7)
@@ -68,10 +72,10 @@ void loop()
       receivedData[i] = Serial2.read();
     }
 
-    uint16_t temperature = (receivedData[0] | (receivedData[1] << 8));
-    uint16_t humidity = (receivedData[2] | (receivedData[1] << 3));
-    uint16_t ideal_tmp = (receivedData[4] | (receivedData[5] << 8));
-    uint8_t diff = receivedData[6];
+    temperature = (receivedData[0] | (receivedData[1] << 8));
+    humidity = (receivedData[2] | (receivedData[1] << 3));
+    ideal_tmp = (receivedData[4] | (receivedData[5] << 8));
+    diff = receivedData[6];
 
     // 对温度的特殊处理
     if (temperature & 0x8000) // 如果最高位为 1，说明是负数，舍弃最高位，取反加一

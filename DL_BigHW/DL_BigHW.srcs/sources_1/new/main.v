@@ -26,6 +26,17 @@ module main(
     output [7:0] oData,         // 存放七段数码管的值，用来硬件绑定
     output [7:0] set,           // 选择的通道，用来分时显示数码管内容
 
+    // 三色灯部分
+    // 温度
+    output reg pwm_reg_t,       // PWM 红色输出
+    output reg pwm_green_t,     // PWM 绿色输出
+    output reg pwm_blue_t,      // PWM 蓝色输出
+
+    // 湿度
+    output reg pwm_red_h,       // PWM 红色输出
+    output reg pwm_green_h,     // PWM 绿色输出
+    output reg pwm_blue_h,      // PWM 蓝色输出
+
     input rst_to_begin // 重置到 SET_TEMP 状态
 );
 
@@ -55,14 +66,16 @@ reg [15:0] ideal_temp = 16'd260; // 理想温度，初始值为 26.0
 reg [7:0] temp_offset = 8'd30; // 偏差值，初始值为 3.0
 
 // 组合逻辑，模块的实例化
-rec_netstat u_netstat (
+rec_netstat u_netstat ( // 网络状态接收模块
     .clk(clk),
     .RX(RX),
     .net_able(net_able),
-    .net_done(net_done)
+    .net_done(net_done),
+    .oData(oData),
+    .set(set)
 );
 
-tmp_init u_init (
+tmp_init u_init ( // 初始化模块
     .clk(clk),
     .rst(rst),
     .btn_inc(btn_inc),
@@ -70,21 +83,49 @@ tmp_init u_init (
     .btn_left(btn_left),
     .btn_right(btn_right),
     .btn_save(btn_save),
+
     .set_able(set_able),
+
     .ideal_temp(ideal_temp),
     .temp_offset(temp_offset),
     .set_done(set_done),
+
     .oData(oData),
     .set(set)
 );
 
-tmp_hum_sensor u_sensor (
+combine_sensor u_sensor ( // 温湿度传感器模块
     .clk(clk),
     .start(get_data_able),
     .data_wire(data_wire),
     .temp(temp),
     .humi(humi),
     .is_done(get_data_done)
+);
+
+data_display u_display ( // 数据显示模块
+    .clk(clk),
+    .temp(temp),
+    .humi(humi),
+    .oData(oData),
+    .set(set),
+    .pwm_red_t(pwm_red_t),
+    .pwm_green_t(pwm_green_t),
+    .pwm_blue_t(pwm_blue_t),
+    .pwm_red_h(pwm_red_h),
+    .pwm_green_h(pwm_green_h),
+    .pwm_blue_h(pwm_blue_h)
+);
+
+send_data u_send ( // 数据发送模块
+    .clk(clk),
+    .send_able(send_able),
+    .temp(temp),
+    .humi(humi),
+    .ideal_temp(ideal_temp),
+    .temp_offset(temp_offset),
+    .send_done(send_done),
+    .TX(TX)
 );
 
 

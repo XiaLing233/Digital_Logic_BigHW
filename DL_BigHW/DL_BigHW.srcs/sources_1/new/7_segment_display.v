@@ -24,6 +24,9 @@ module display7(
                 4'b1000 : TmpData <= 7'b0001001;     // H        BCEFG
                 4'b1001 : TmpData <= 7'b1100000;     // D        ABCDE
                 4'b1010 : TmpData <= 7'b0001110;     // F        AEFG
+                4'b1011 : TmpData <= 7'b1000000;     // O        ABCDEF
+                4'b1100 : TmpData <= 7'b0001010;     // K        ACEFG
+                4'b1101 : TmpData <= 7'b0001000;     // A        ABCEFG
                 4'b1111 : TmpData <= 7'b0111111;     // -        G
                 default : TmpData <= 7'b1111111;     // 默认都不显示
             endcase
