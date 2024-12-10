@@ -96,6 +96,8 @@ begin
                 else
                     clk_count <= clk_count + 1;
             end
+            else if (RX == 1) // 如果接收到停止位，或者压根没接收到数据
+                rx_state <= 0;
         end
     endcase
 end

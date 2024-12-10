@@ -10,13 +10,13 @@ module data_display(
     output [7:0] set,                // 选择的通道
 
     /* 三色灯部分 */
-    output reg pwm_red_t,            // PWM 红色输出
-    output reg pwm_green_t,          // PWM 绿色输出
-    output reg pwm_blue_t,            // PWM 蓝色输出
+    output pwm_red_t,            // PWM 红色输出
+    output pwm_green_t,          // PWM 绿色输出
+    output pwm_blue_t,            // PWM 蓝色输出
 
-    output reg pwm_red_h,            // PWM 红色输出
-    output reg pwm_green_h,          // PWM 绿色输出
-    output reg pwm_blue_h            // PWM 蓝色输出
+    output pwm_red_h,            // PWM 红色输出
+    output pwm_green_h,          // PWM 绿色输出
+    output pwm_blue_h            // PWM 蓝色输出
 );
 
 reg [39:0] iData; // 七段数码管的输入
@@ -51,36 +51,36 @@ tri_LED u_tri_LED_humi (
 // 对七段数码管的处理
 always @(*)
 begin
-    iData[39:35] <= 5'b10111; // T
-    iData[19:15] <= 5'b11000; // H
-
+    iData[39:35] = 5'b10111; // T
+    iData[19:15] = 5'b11000; // H
+    abs_temp = temp;        // 初始的，可能为负，为了消除 latch warning
     // 温度
     if (temp[15] == 1) // 零下
     begin
         // 先把温度取绝对值
-        abs_temp <= temp & 16'h7FFF;
+        abs_temp = temp & 16'h7FFF;
         if (abs_temp > 99) // 三位数，显示不下
         begin
-            iData[34:20] <= 15'b100001010110110; // T.Lo
+            iData[34:20] = 15'b100001010110110; // T.Lo
         end
         else
         begin
-            iData[34:30] <= 5'b11111; // -
-            iData[29:25] <= (abs_temp / 10) % 10;
-            iData[24:20] <= abs_temp % 10;
+            iData[34:30] = 5'b11111; // -
+            iData[29:25] = (abs_temp / 10) % 10;
+            iData[24:20] = abs_temp % 10;
         end
     end
     else // 零上
     begin
-            iData[34:30] <= (abs_temp / 100) % 10;
-            iData[29:25] <= (abs_temp / 10) % 10;
-            iData[24:20] <= abs_temp % 10;
+            iData[34:30] = (abs_temp / 100) % 10;
+            iData[29:25] = (abs_temp / 10) % 10;
+            iData[24:20] = abs_temp % 10;
     end
 
     // 湿度
-    iData[14:10] <= (humi / 100) % 10;
-    iData[9:5] <= (humi / 10) % 10;
-    iData[4:0] <= humi % 10;     
+    iData[14:10] = (humi / 100) % 10;
+    iData[9:5] = (humi / 10) % 10;
+    iData[4:0] = humi % 10;     
 end
 
 // 对三色灯的处理
@@ -88,23 +88,23 @@ always @(*)
 begin
     // 温度
     if (temp[15] == 1) // 零下
-        rgb <= 24'h24AEF0; // 蓝色
+        rgb = 24'h24AEF0; // 蓝色
     else // 零上
     begin
         if (temp > 250)
-            rgb <= 24'hFE706C; // 红色
+            rgb = 24'hFE706C; // 红色
         else if (temp < 180)
-            rgb <= 24'h24AEF0;
+            rgb = 24'h24AEF0;
         else
-            rgb <= 24'h3ECF7F; // 绿色
+            rgb = 24'h3ECF7F; // 绿色
     end
 
     // 湿度
     if (humi > 700)
-        rgb <= 24'h24AEF0; // 蓝色
+        rgb = 24'h24AEF0; // 蓝色
     else if (humi < 400)
-        rgb <= 24'hFE706C; // 红色
+        rgb = 24'hFE706C; // 红色
     else
-        rgb <= 24'h3ECF7F; // 绿色
+        rgb = 24'h3ECF7F; // 绿色
 end
 endmodule

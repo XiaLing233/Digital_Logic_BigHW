@@ -3,9 +3,9 @@ module combine_sensor(
     input clk,
     input start,
     inout data_wire,
-    output reg [15:0] temp,
-    output reg [15:0] humi,
-    output reg is_done
+    output [15:0] temp,
+    output [15:0] humi,
+    output is_done
 );
 
 wire o_clk;
@@ -63,7 +63,6 @@ module tmp_hum_sensor(
 reg data_wire_out;                  // 控制数据线的输出信号，这样可以时序控制
 reg [39:0] data_storage;            // 存放接收到的 40 位数据
 integer i;                          // 指向存储内容的指针
-integer counter;                    // 记录经过了多少个时钟周期，需要共用
 assign data_wire = data_wire_out;   // 绑定输出
 
 // 定义等待的秒数
@@ -73,6 +72,14 @@ parameter SLAVE_RESPONSE_1 = 20;            // 20us
 parameter SLAVE_RESPONSE_2 = 80;            // 80us
 parameter ZERO_ONE_DIVIDE = 40;             // 40us，留一些冗余，来判断 0 / 1
 parameter ERROR_RESTART = 1000000;          // 1s
+
+// 计数器
+integer counter_start_high = 0;
+integer counter_start_low = 0;
+integer counter_slave_response_1 = 0;
+integer counter_slave_response_2 = 0;
+integer counter_zero_one_divide = 0;
+integer counter_error_restart = 0;
 
 // 定义状态
 localparam [3:0]
@@ -104,56 +111,50 @@ end
 // 状态转移条件
 always @(*)
 begin
-    next_state <= state; // 如果没有转移下一个状态，在当前状态空转
+    next_state = state; // 如果没有转移下一个状态，在当前状态空转
     case (state)
         IDLE:
         begin
             if (start)
-                next_state <= START_HIGH_STATE;
+                next_state = START_HIGH_STATE;
         end
         START_HIGH_STATE:
         begin
-            if (counter == START_HIGH)
+            if (counter_start_high == START_HIGH)
             begin
-                next_state <= START_LOW_STATE;
-                counter <= 0;
+                next_state = START_LOW_STATE;
             end
 
         end
         START_LOW_STATE:
         begin
-            if (counter == START_LOW)
+            if (counter_start_low == START_LOW)
                 begin
-                    next_state <= SLAVE_RESPONSE_1_STATE;
-                    counter <= 0;
+                    next_state = SLAVE_RESPONSE_1_STATE;
                 end
 
         end
         SLAVE_RESPONSE_1_STATE:
         begin
-            if (counter == SLAVE_RESPONSE_1)
+            if (counter_slave_response_1 == SLAVE_RESPONSE_1)
                 begin
-                    next_state <= SLAVE_RESPONSE_2_STATE;
-                    counter <= 0;
+                    next_state = SLAVE_RESPONSE_2_STATE;
                 end
             else if (data_wire == 1'b0)
             begin
-                next_state <= ERROR;
-                counter <= 0;
+                next_state = ERROR;
             end
         end
         SLAVE_RESPONSE_2_STATE:
         begin
-            if (counter == SLAVE_RESPONSE_2)
+            if (counter_slave_response_2 == SLAVE_RESPONSE_2)
                 begin
-                    next_state <= READ_DATA;
-                    counter <= 0;
+                    next_state = READ_DATA;
                 end
 
             else if (data_wire == 1'b1)
             begin
-                next_state <= ERROR;
-                counter <= 0;
+                next_state = ERROR;
             end
 
         end
@@ -161,30 +162,28 @@ begin
         begin
             if (i < 0)
             begin
-                next_state <= CHECK_DATA;
-                counter <= 0; // 尽管可能不需要，但还是置零吧
+                next_state = CHECK_DATA;
             end
 
         end
         CHECK_DATA:
         begin
             if (data_storage[39:32] + data_storage[31:24] + data_storage[23:16] + data_storage[15:8] == data_storage[7:0])
-                next_state <= DONE;
+                next_state = DONE;
             else
             begin
-                next_state <= ERROR;
-                counter <= 0;
+                next_state = ERROR;
             end
 
         end
         DONE:
         begin
-            // 自己空转
+            // 自己空转， start 信号控制
         end
         ERROR:
         begin
-            if (counter >= ERROR_RESTART)
-                next_state <= START_HIGH_STATE;
+            if (counter_error_restart >= ERROR_RESTART)
+                next_state = IDLE; // 重新开始，因为要清零。因为并没有成功，所以 start 信号一直是 1
         end
     endcase
 end
@@ -200,51 +199,59 @@ begin
             // humi <= 16'b0;
             data_storage <= 40'b0;
             data_wire_out <= 1'b1;
-            counter <= 0;
+
+            // 这几个计数器要清零
+            counter_start_high <= 0;
+            counter_start_low <= 0;
+            counter_slave_response_1 <= 0;
+            counter_slave_response_2 <= 0;
+            counter_zero_one_divide <= 0;
+            counter_error_restart <= 0;
+
             i <= 39;
         end
         START_HIGH_STATE:
         begin
             data_wire_out <= 1'b1;
-            counter <= counter + 1;
+            counter_start_high <= counter_start_high + 1;
         end
         START_LOW_STATE:
         begin
             data_wire_out <= 1'b0;
-            counter <= counter + 1;
+            counter_start_low <= counter_start_low + 1;
         end
         SLAVE_RESPONSE_1_STATE:
         begin
             data_wire_out <= 1'bz;
-            counter <= counter + 1;
+            counter_slave_response_1 <= counter_slave_response_1 + 1;
         end
         SLAVE_RESPONSE_2_STATE:
         begin
-            counter <= counter + 1;
+            counter_slave_response_2 <= counter_slave_response_2 + 1;
         end
         READ_DATA:
         begin
             if (data_wire == 1'b0) // 每次到 0 的时候，处理一下之前读入的内容。当然要求 counter 非 0，排除第一个
             begin
-                if (counter)
+                if (counter_zero_one_divide)
                 begin
-                    if (counter >= ZERO_ONE_DIVIDE)
+                    if (counter_zero_one_divide >= ZERO_ONE_DIVIDE)
                     begin
                         data_storage[i] <= 1'b1;
                         i <= i - 1;
-                        counter <= 0;
+                        counter_zero_one_divide <= 0;
                     end
                     else
                     begin
                         data_storage[i] <= 1'b0;
                         i <= i - 1;
-                        counter <= 0;
+                        counter_zero_one_divide <= 0;
                     end
                 end
             end
             else // if (data_wire == 1'b1) 已经包含了所有情况
             begin
-                counter <= counter + 1;
+                counter_zero_one_divide <= counter_zero_one_divide + 1;
             end
         end
         CHECK_DATA:
@@ -259,7 +266,7 @@ begin
         end
         ERROR:
         begin
-            counter <= counter + 1;
+            counter_error_restart <= counter_error_restart + 1;
         end
     endcase
 end
