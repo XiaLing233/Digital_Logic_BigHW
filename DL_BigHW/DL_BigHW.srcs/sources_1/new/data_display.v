@@ -4,6 +4,7 @@ module data_display(
     input clk,                      // E3 系统时钟，不用分频，数码管已经集成了分频模块
     input [15:0] temp,              // 温度
     input [15:0] humi,              // 湿度
+    input ena,                      // 使能信号
 
     /* 七段数码管部分 */
     output [7:0] oData,             // 存放七段数码管的值，用来硬件绑定
@@ -35,6 +36,7 @@ combine_display7 u_display7 (
 tri_LED u_tri_LED_temp (
     .clk(clk),
     .rgb(rgb),
+    .ena(ena),
     .pwm_red(pwm_red_t),
     .pwm_green(pwm_green_t),
     .pwm_blue(pwm_blue_t)
@@ -43,6 +45,7 @@ tri_LED u_tri_LED_temp (
 tri_LED u_tri_LED_humi (
     .clk(clk),
     .rgb(rgb),
+    .ena(ena),
     .pwm_red(pwm_red_h),
     .pwm_green(pwm_green_h),
     .pwm_blue(pwm_blue_h)

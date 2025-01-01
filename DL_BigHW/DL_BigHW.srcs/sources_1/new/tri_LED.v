@@ -4,6 +4,7 @@
 module tri_LED(
     input clk,             // 时钟信号，系统时钟就好了
     input [23:0] rgb,      // 三色在一起，从高到低是 R G B
+    input ena,              // 使能信号，高电平有效
     output reg pwm_red,    // PWM 红色输出
     output reg pwm_green,  // PWM 绿色输出
     output reg pwm_blue    // PWM 蓝色输出
@@ -19,14 +20,14 @@ module tri_LED(
     // 红色通道 PWM 生成
     always @(posedge clk)
     begin
-        if (counter < rgb[23:16])
+        if (counter < rgb[23:16] && ena)
             pwm_red <= 1;
         else
             pwm_red <= 0;
     end
 
     // 绿色通道 PWM 生成
-    always @(posedge clk)
+    always @(posedge clk && ena)
     begin
         if (counter < rgb[15:8])
             pwm_green <= 1;
@@ -35,7 +36,7 @@ module tri_LED(
     end
 
     // 蓝色通道 PWM 生成
-    always @(posedge clk)
+    always @(posedge clk && ena)
     begin
         if (counter < rgb[7:0])
             pwm_blue <= 1;

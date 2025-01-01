@@ -5,20 +5,23 @@ module rec_netstat(
     input net_able, // 高电平表示网络初始化
     output reg net_done,
     output [7:0] oData, // 存放七段数码管的值，用来硬件绑定
-    output [7:0] set  // 选择的通道
+    output [7:0] set,  // 选择的通道
+    output TX      // 给 TX 发送 0x99 表示开始连接网络
 );
 
 parameter BAUD_RATE = 115200;
 parameter CLOCK_RATE = 100000000; // 100MHz
 parameter BIT_PERIOD = CLOCK_RATE / BAUD_RATE; //每传输一个bit所需的时钟周期
 
-reg [7:0] rx_data;
+reg [7:0] rx_data = 8'h00; // 接收到的数据
 reg [3:0] bit_count;
 reg [31:0] clk_count;
-reg [39:0] iData;       // 存放向数码管传输的数据
-reg [7:0] isDot;        // 存放小数点的情况
+reg [39:0] iData = 40'h8CA748437C;       // 存放向数码管传输的数据 INIT .
+reg [7:0] isDot = 8'hAA;        // 存放小数点的情况
 reg rx_state;
-reg state, next_state;
+reg[2:0] state = IDLE;      // 位宽要和状态编码对应！！！
+reg[2:0] next_state;
+reg send_done = 0;          // 记录是否给 ESP32 发送了连接要求
 
 // 七段数码管的组合逻辑
 combine_display7 uut (
@@ -30,13 +33,35 @@ combine_display7 uut (
     .set(set)
 );
 
-parameter IDLE = 1'b0;
-parameter REC = 1'b1;
+parameter IDLE = 3'b001;
+parameter SEND = 3'b010;
+parameter REC = 3'b100;
+
+// 波特率计数器
+reg [13:0] baud_counter = 14'd0;
+
+// 位计数器
+reg [3:0] bit_counter = 4'b0; // 总共需要发送10位
+
+reg [9:0] data_to_send = 10'b1100110010; // 发送 0x99 表示开始连接网络
+
+// 输出寄存器
+reg tx_reg = 1'b1;
+assign TX = tx_reg;
 
 always @(posedge clk)
 begin
     if (net_able)
-        state <= REC;
+    begin
+        if (send_done)
+        begin
+            state <= REC;
+        end
+        else
+        begin
+            state <= SEND;
+        end
+    end
     else
         state <= IDLE;
 end
@@ -49,6 +74,34 @@ begin
         begin
             rx_state <= 1'b0;
             net_done <= 1'b0;
+            send_done <= 1'b0;
+            baud_counter <= 14'd0;
+            bit_counter <= 4'b0;
+            isDot <= 8'h80;     // INIT .
+        end
+        SEND:
+        begin
+            isDot <= 8'h0C;     // INIT ..
+            if (baud_counter < BIT_PERIOD - 1)
+            begin
+                baud_counter <= baud_counter + 1;
+            end
+            else
+            begin
+                baud_counter <= 0;
+                tx_reg <= data_to_send[bit_counter];
+
+                if (bit_counter == 9) // 不要把条件判断和加法运算并列！
+                begin
+                    send_done <= 1'b1;
+                    isDot <= 8'h0E; // INIT ...
+                    bit_counter <= 4'b0;
+                end
+                else
+                begin
+                    bit_counter <= bit_counter + 1;
+                end
+            end
         end
         REC:
         begin
@@ -57,7 +110,6 @@ begin
                 rx_state <= 1;
                 clk_count <= 0;
                 bit_count <= 0;
-                iData <= 40'h8CA7484210; // INIT ....
                 isDot <= 8'h0F;
             end
             else if (rx_state == 1)
@@ -84,7 +136,7 @@ begin
                             isDot <= 8'h00;
                         end
 
-                        else if (rx_data == 8'hee)
+                        else // (rx_data == 8'hee) 其实只要不是 0x99 就是失败，不然恐怕有未定义行为
                         begin
                             net_done <= 1'b0;
                             iData <= 40'h8CA74D7635; // INIT FAIL
@@ -97,7 +149,10 @@ begin
                     clk_count <= clk_count + 1;
             end
             else if (RX == 1) // 如果接收到停止位，或者压根没接收到数据
+            begin
                 rx_state <= 0;
+                isDot <= 8'h00;
+            end
         end
     endcase
 end

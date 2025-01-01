@@ -12,59 +12,77 @@ void setup()
 {
   Serial.begin(115200);  // 初始化串口通信，波特率为115200
   Serial2.begin(UART_BAUD_RATE, SERIAL_8N1, UART_RX_PIN, UART_TX_PIN); // 这个串口是用来和开发板通信的
-  delay(5000);  // 延时1秒
+  delay(1000);  // 延时1秒
 
-  if (Serial.available())
+  Serial.println("Waiting for start signal (0x99)...");
+
+  while (true)
   {
-    u_int8_t wel_data = Serial.read();
+    if (Serial2.available() > 0)
+    { 
+      uint8_t receivedByte = Serial2.read();
 
-    if (wel_data == 0x99)
-    {
-      int counter = 0;
-
-      Serial.println("Connecting...");
-      Serial.flush();
-
-      // 配置 WPA2-Enterprise 参数
-      WiFi.disconnect(true);      // 断开现有连接
-      WiFi.mode(WIFI_STA);
-
-      // 设置 WPA2-Enterprise 配置
-      esp_eap_client_set_identity((uint8_t *)identity, strlen(identity));
-      esp_eap_client_set_username((uint8_t *)username, strlen(username));
-      esp_eap_client_set_password((uint8_t *)password, strlen(password));
-      
-      // 启用 WPA2-Enterprise
-      esp_wifi_sta_enterprise_enable();
-
-      WiFi.begin(ssid);     // 对于 WPA2-Enterprise，密码参数设为 NULL
-
-      // 等待连接
-      while (WiFi.status() != WL_CONNECTED)
+      if (receivedByte == 0x99)
       {
-        delay(1000);  // 每秒检查一次连接状态
-        Serial.print(".");
-        counter++;
-
-        if (counter >= 20)
-        {
-          Serial2.write(0xee);
-          counter = 0;
-          ESP.restart();
-        }
+        Serial.println("Received start signal (0x99)");
+        break;
       }
-
-      // WiFi连接成功后打印相关信息
-      Serial.println("WiFi connected");
-      Serial.println("IP address: ");
-      Serial.println(WiFi.localIP());
-      Serial2.write(0x99);
     }
+
+    // 连接中，LED 灯闪烁
+    Serial.println("Waiting for input...");
+    pinMode(2, OUTPUT);
+    digitalWrite(2, HIGH);
+    delay(100);
+    digitalWrite(2, LOW);
+
+    delay(10);  // 短暂延时，避免过度占用 CPU
   }
-  
 
+    Serial.println("Connecting...");
+    Serial.flush();
 
-  
+    // 配置 WPA2-Enterprise 参数
+    WiFi.disconnect(true);      // 断开现有连接
+    WiFi.mode(WIFI_STA);
+
+    // 设置 WPA2-Enterprise 配置
+    esp_eap_client_set_identity((uint8_t *)identity, strlen(identity));
+    esp_eap_client_set_username((uint8_t *)username, strlen(username));
+    esp_eap_client_set_password((uint8_t *)password, strlen(password));
+    
+    // 启用 WPA2-Enterprise
+    esp_wifi_sta_enterprise_enable();
+
+    WiFi.begin(ssid);     // 对于 WPA2-Enterprise，密码参数设为 NULL
+
+    int counter = 0;
+
+    // 等待连接
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      delay(1000);  // 每秒检查一次连接状态
+      Serial.print(".");
+      counter++;
+
+      if (counter >= 20)
+      {
+        Serial2.write(0xee);
+        counter = 0;
+        ESP.restart();
+      }
+    }
+
+    // WiFi连接成功后打印相关信息
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    Serial2.write(0x99);
+    Serial.write(0x99);
+
+    // 连接成功后，LED 灯亮
+    pinMode(2, OUTPUT);
+    digitalWrite(2, HIGH);
 }
 
 void loop()
