@@ -22,7 +22,8 @@ module data_display(
 
 reg [39:0] iData; // 七段数码管的输入
 reg [15:0] abs_temp; // 温度的绝对值
-reg [23:0] rgb;   // 三色灯的输入
+reg [23:0] rgb_temp;   // 三色灯的输入
+reg [23:0] rgb_humi;   // 三色灯的输入
 
 combine_display7 u_display7 (
     .clk(clk),
@@ -35,7 +36,7 @@ combine_display7 u_display7 (
 
 tri_LED u_tri_LED_temp (
     .clk(clk),
-    .rgb(rgb),
+    .rgb(rgb_temp),
     .ena(ena),
     .pwm_red(pwm_red_t),
     .pwm_green(pwm_green_t),
@@ -44,7 +45,7 @@ tri_LED u_tri_LED_temp (
 
 tri_LED u_tri_LED_humi (
     .clk(clk),
-    .rgb(rgb),
+    .rgb(rgb_humi),
     .ena(ena),
     .pwm_red(pwm_red_h),
     .pwm_green(pwm_green_h),
@@ -91,23 +92,23 @@ always @(*)
 begin
     // 温度
     if (temp[15] == 1) // 零下
-        rgb = 24'h24AEF0; // 蓝色
+        rgb_temp = 24'h24AEF0; // 蓝色
     else // 零上
     begin
         if (temp > 250)
-            rgb = 24'hFE706C; // 红色
+            rgb_temp = 24'hFE706C; // 红色
         else if (temp < 180)
-            rgb = 24'h24AEF0;
+            rgb_temp = 24'h24AEF0;
         else
-            rgb = 24'h3ECF7F; // 绿色
+            rgb_temp = 24'h3ECF7F; // 绿色
     end
 
     // 湿度
     if (humi > 700)
-        rgb = 24'h24AEF0; // 蓝色
+        rgb_humi = 24'h24AEF0; // 蓝色
     else if (humi < 400)
-        rgb = 24'hFE706C; // 红色
+        rgb_humi = 24'hFE706C; // 红色
     else
-        rgb = 24'h3ECF7F; // 绿色
+        rgb_humi = 24'h3ECF7F; // 绿色
 end
 endmodule

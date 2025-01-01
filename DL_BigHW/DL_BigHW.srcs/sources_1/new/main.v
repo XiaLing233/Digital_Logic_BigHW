@@ -59,10 +59,10 @@ localparam [2:0]
 // 状态寄存器
 reg [2:0] state = IDLE; // 状态机的状态
 reg [2:0] next_state;           // 状态机的状态和下一个状态
-reg net_able;                 // 是否启用网络的标志位
-reg set_able;                 // 是否启用设定的标志位
-reg get_data_able;            // 是否启用获取数据的标志位
-reg send_able;                // 是否启用发送的标志位
+reg net_able = 0;                 // 是否启用网络的标志位
+reg set_able = 0;                 // 是否启用设定的标志位
+reg get_data_able = 0;            // 是否启用获取数据的标志位
+reg send_able = 0;                // 是否启用发送的标志位
 
 reg is_tri_led = 1'b0;               // 是否是三色灯的标志位，如果在初始化，则不显示，因为数值不可信..
 
@@ -98,8 +98,8 @@ begin
     case (state)
         IDLE:
         begin
-            oData = 40'h8421084210;
-            set = 8'b00000000;
+            oData = 8'b11111111;        // 空闲状态，数码管全灭
+            set = 8'b00000000;          //  ........
         end
         INIT_NETWORK:
         begin 
@@ -238,7 +238,7 @@ begin
             // 发送到网络
             if (send_done) // 如果发送完毕
             begin
-                next_state = SET_TEMP; // 转移到设定预期温度的状态
+                next_state = WAIT; // 转移到等待的状态
             end
         end
         WAIT:

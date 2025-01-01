@@ -9,7 +9,7 @@ module tri_LED(
     output reg pwm_green,  // PWM 绿色输出
     output reg pwm_blue    // PWM 蓝色输出
 );
-    reg [8:0] counter = 9'b0; // 计数器多一位，在保证对所有 RGB 支持的同时，确保占空比最大为 50%
+    reg [10:0] counter = 11'b0; // 计数器多一位，在保证对所有 RGB 支持的同时，确保占空比最大为 50%。还是太亮了，再加一位！
 
     // 计数器
     always @(posedge clk)
