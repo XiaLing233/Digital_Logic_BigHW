@@ -53,54 +53,59 @@ void setup()
     delay(500);
   }
 
-    Serial.println("Connecting...");
-    Serial.flush();
-
-    // 配置 WPA2-Enterprise 参数
-    WiFi.disconnect(true);      // 断开现有连接
-    WiFi.mode(WIFI_STA);
-
-    // 设置 WPA2-Enterprise 配置
-    esp_eap_client_set_identity((uint8_t *)IDENTITY, strlen(IDENTITY));
-    esp_eap_client_set_username((uint8_t *)USERNAME, strlen(USERNAME));
-    esp_eap_client_set_password((uint8_t *)PASSWORD, strlen(PASSWORD));
-    
-    // 启用 WPA2-Enterprise
-    esp_wifi_sta_enterprise_enable();
-
-    WiFi.begin(SSID);     // 对于 WPA2-Enterprise，密码参数设为 NULL
-
-    int counter = 0;
-
-    // 等待连接
-    while (WiFi.status() != WL_CONNECTED)
+    while (true)
     {
-      delay(1000);  // 每秒检查一次连接状态
-      Serial.print(".");
-      counter++;
+      Serial.println("Connecting...");
+      Serial.flush();
 
-      if (counter >= 20)
+      // 配置 WPA2-Enterprise 参数
+      WiFi.disconnect(true);      // 断开现有连接
+      WiFi.mode(WIFI_STA);
+
+      // 设置 WPA2-Enterprise 配置
+      esp_eap_client_set_identity((uint8_t *)IDENTITY, strlen(IDENTITY));
+      esp_eap_client_set_username((uint8_t *)USERNAME, strlen(USERNAME));
+      esp_eap_client_set_password((uint8_t *)PASSWORD, strlen(PASSWORD));
+      
+      // 启用 WPA2-Enterprise
+      esp_wifi_sta_enterprise_enable();
+
+      WiFi.begin(SSID);     // 对于 WPA2-Enterprise，密码参数设为 NULL
+
+      int counter = 0;
+
+      // 等待连接
+      while (WiFi.status() != WL_CONNECTED)
       {
-        Serial2.write(0xee);
-        counter = 0;
-        ESP.restart();
+        delay(1000);  // 每秒检查一次连接状态
+        Serial.print(".");
+        counter++;
+
+        if (counter >= 20)
+        {
+          Serial2.write(0xee);
+          counter = 0;
+          continue;
+        }
       }
-    }
 
-    // WiFi连接成功后打印相关信息
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial2.write(0x99);
-    Serial.write(0x99);
+      // WiFi连接成功后打印相关信息
+      Serial.println("WiFi connected");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+      Serial2.write(0x99);
+      Serial.write(0x99);
 
-    // 连接成功后，LED 灯亮
-    pinMode(2, OUTPUT);
-    digitalWrite(2, HIGH);
+      // 连接成功后，LED 灯亮
+      pinMode(2, OUTPUT);
+      digitalWrite(2, HIGH);
 
 #if IS_HTTPS
-    client.setCACert(ROOT_CA);   // 设置根证书
+      client.setCACert(ROOT_CA);   // 设置根证书
 #endif
+
+      break;
+    }
 }
 
 // 发送 POST 请求
@@ -223,9 +228,9 @@ void loop()
       receivedData[i] = Serial2.read();
     }
 
-    temperature = (receivedData[1] | (receivedData[0] << 8));
-    humidity = (receivedData[3] | (receivedData[2] << 8));
-    ideal_tmp = (receivedData[5] | (receivedData[4] << 8));
+    temperature = ((receivedData[0] << 8) | receivedData[1]);
+    humidity = ((receivedData[2] << 8)| receivedData[3]);
+    ideal_tmp = ((receivedData[4] << 8) | receivedData[5]);
     diff = receivedData[6];
 
     // 对温度的特殊处理

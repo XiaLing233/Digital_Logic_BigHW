@@ -16,7 +16,7 @@ parameter BIT_PERIOD = CLOCK_RATE / BAUD_RATE; //每传输一个bit所需的时�
 reg [7:0] rx_data = 8'h00; // 接收到的数据
 reg [3:0] bit_count;
 reg [31:0] clk_count;
-reg [39:0] iData = 40'h8CA748437C;       // 存放向数码管传输的数据 INIT .
+reg [39:0] iData = 40'h8CA7484210;       // 存放向数码管传输的数据 INIT .
 reg [7:0] isDot = 8'hAA;        // 存放小数点的情况
 reg rx_state;
 reg[3:0] state = IDLE;      // 位宽要和状态编码对应！！！
@@ -97,12 +97,13 @@ begin
             send_done <= 1'b0;
             baud_counter <= 14'd0;
             bit_counter <= 4'b0;
-            iData = 40'h8CA748437C;
+            iData = 40'h8CA7484210;
             isDot <= 8'h08;     // INIT .
         end
         SEND:
         begin
-            iData = 40'h8CA748437C;
+            // iData = 40'h8CA748437C;
+            iData = 40'h8CA7484210;
             isDot <= 8'h0C;     // INIT ..
             if (baud_counter < BIT_PERIOD - 1)
             begin
@@ -117,7 +118,7 @@ begin
                 begin
                     send_done <= 1'b1;
                     // iData = 40'h8CA748437C;
-                    iData = 40'h8CA748CA74;
+                    iData = 40'h8CA7484210;
                     isDot <= 8'h0E; // INIT ...
                     bit_counter <= 4'b0;
                 end
@@ -156,8 +157,8 @@ begin
                         if (rx_data == 8'h99)
                         begin
                             net_done <= 1'b1;
-                            // iData <= 40'h8CA748437C; // INIT ..OK
-                            iData <= 40'h8437C8437C; // INIT ..OK
+                            iData <= 40'h8CA748437C; // INIT ..OK
+                            // iData <= 40'h8437C8437C; // OK OK
                             isDot <= 8'h00;
                         end
 
@@ -165,7 +166,7 @@ begin
                         begin
                             net_done <= 1'b0;
                             // iData <= 40'h8CA74D7635; // INIT FAIL
-                            iData <= 40'hD7635D7635; // INIT FAIL
+                            iData <= 40'hD7635D7635; // FAIL FAIL
                             isDot <= 8'h00;
                         end
                     end

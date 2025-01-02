@@ -16,6 +16,8 @@ CONFIG.read('config.ini')
 
 # 设置数据库连接
 DB_HOST = CONFIG['database']['host']
+DB_USER = CONFIG['database']['user']
+DB_PASSWORD = CONFIG['database']['password']
 DB_USER_READ_ONLY = CONFIG['database']['user-read-only']
 DB_PASSWORD_READ_ONLY = CONFIG['database']['password-read-only']
 DB_DATABASE = CONFIG['database']['database']
@@ -38,13 +40,22 @@ ENCODING = CONFIG['log']['encoding']
 # 数据库配置
 DB_CONFIG = {
     'host': DB_HOST,
+    'user': DB_USER,
+    'password': DB_PASSWORD,
+    'database': DB_DATABASE,
+    'port': DB_PORT,
+    'charset': DB_CHARSET
+}
+
+# 数据库只读配置
+DB_CONFIG_READ_ONLY = {
+    'host': DB_HOST,
     'user': DB_USER_READ_ONLY,
     'password': DB_PASSWORD_READ_ONLY,
     'database': DB_DATABASE,
     'port': DB_PORT,
     'charset': DB_CHARSET
 }
-
 
 # 配置日志
 def setup_logger():
@@ -90,7 +101,7 @@ def data_store():
     # 获取 json 数据
     data = request.json
     temperature = data['temperature'] * 1.0 / 10        # 因为传入的是整数，所以要除以 10
-    humidity = data['humidity'] * 1.0 / 10              # 因为传入的是整数，所以要除以 10
+    humidity = (data['humidity'] * 1.0 - 32000) / 10              # 因为传入的是整数，所以要除以 10, 32000 的事儿，到时候再看
     ideal_temp = data['ideal_temp'] * 1.0 / 10          # 因为传入的是整数，所以要除以 10
     diff = data['diff'] * 1.0 / 10                      # 因为传入的是整数，所以要除以 10
     device_mac = data['device_mac']
@@ -113,6 +124,9 @@ def data_store():
     print("device_ip: ", device_ip)
     print("device_name: ", device_name)
 
+    # 记录日志
+    LOGGER.info(f"temperature: {temperature}, humidity: {humidity}, ideal_temp: {ideal_temp}, diff: {diff}, device_mac: {device_mac}, device_ip: {device_ip}, device_name: {device_name}")
+
     # 连接数据库
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
@@ -121,9 +135,12 @@ def data_store():
     now = time.strftime('%Y-%m-%d %H:%M:%S')
 
     # 插入数据
-    sql = f"INSERT INTO {TABLE_NAME} ({TEMP}, {HUMI}, {IDEAL_TEMP}, {TEMP_DIFF}, {TIMESTAMP}) VALUES ({temperature}, {humidity}, {ideal_temp}, {diff}, {now})"
+    sql = f"INSERT INTO {TABLE_NAME} ({TEMP}, {HUMI}, {IDEAL_TEMP}, {TEMP_DIFF}, {TIMESTAMP}) VALUES ({temperature}, {humidity}, {ideal_temp}, {diff}, '{now}')" # now 是字符串，所以要加引号
 
     print("sql: ", sql)
+
+    # 记录日志
+    LOGGER.info(f"执行的sql语句是: {sql}")
 
     cursor.execute(sql)
 

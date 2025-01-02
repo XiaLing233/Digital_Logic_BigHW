@@ -44,6 +44,7 @@ begin
         begin
             send_done <= 1'b0;
             // 按照小端方式加载数据，并为每个字节添加起始位和停止位
+            // 参考：https://www.labcenter.com/blog/sim-uart/
             data_to_send <=
             {
                 1'b1, temp_offset,1'b0,
