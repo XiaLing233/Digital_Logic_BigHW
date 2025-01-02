@@ -25,7 +25,7 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-content>
+      <a-layout-content style="min-height: 800px">
         <router-view />
       </a-layout-content>
     </a-layout>
