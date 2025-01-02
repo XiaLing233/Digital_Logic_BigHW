@@ -101,7 +101,7 @@ def data_store():
     # 获取 json 数据
     data = request.json
     temperature = data['temperature'] * 1.0 / 10        # 因为传入的是整数，所以要除以 10
-    humidity = (data['humidity'] * 1.0 - 32000) / 10              # 因为传入的是整数，所以要除以 10, 32000 的事儿，到时候再看
+    humidity = (data['humidity'] - 32768) * 1.0 / 10     # 因为传入的是整数，所以要除以 10, 32768 的事儿，正常不应该需要，但是这个传感器有点问题
     ideal_temp = data['ideal_temp'] * 1.0 / 10          # 因为传入的是整数，所以要除以 10
     diff = data['diff'] * 1.0 / 10                      # 因为传入的是整数，所以要除以 10
     device_mac = data['device_mac']
@@ -109,12 +109,19 @@ def data_store():
     device_name = data['device_name']
 
     # 判断是不是合法的来源
-    if (device_name != "SZLJ_ESP32"):
+    if (device_name != "SZLJ_ESP32" or device_mac != "F0:24:F9:5A:A3:94"):
         return jsonify({
             'status': 'fail',
             'msg': '非法来源'
         }), 403
     
+    # 判断数据是否合法
+    if (temperature < -40 or temperature > 80 or humidity <= 0 or humidity >= 100):
+        return jsonify({
+            'status': 'fail',
+            'msg': '数据不合法'
+        }), 400
+
     # 调试
     print("temperature: ", temperature)
     print("humidity: ", humidity)
@@ -140,7 +147,7 @@ def data_store():
     print("sql: ", sql)
 
     # 记录日志
-    LOGGER.info(f"执行的sql语句是: {sql}")
+    LOGGER.info(f"data_store 执行的sql语句是: {sql}")
 
     cursor.execute(sql)
 
@@ -156,3 +163,66 @@ def data_store():
         'msg': '数据存储成功'
     }), 200
 
+# 前端获取数据
+'''
+传入的 json 数据格式：
+{
+    "date": "日期", // 形如 2025-01-01
+}
+'''
+'''
+返回的 json 数据格式：
+{
+    "status": "ok",
+    "msg": "数据获取成功",
+    "data": [
+        {
+            "temperature": "温度",
+            "humidity": "湿度",
+            "ideal_temp": "理想温度",
+            "diff": "温差",
+            "timestamp": "时间戳" // 形如 2025-01-01 00:00:00
+        },
+        ...
+    ]
+}
+'''
+@app.route('/api/data_get', methods=['POST'])
+def data_get():
+    # 获取 json 数据
+    data = request.json
+    date = data['date']
+
+    # 连接数据库
+    conn = mysql.connector.connect(**DB_CONFIG_READ_ONLY)
+    cursor = conn.cursor()
+
+    # 查询数据
+    sql = f"SELECT * FROM {TABLE_NAME} WHERE DATE({TIMESTAMP}) = '{date}'"
+
+    # 记录日志
+    LOGGER.info(f"data_get 执行的sql语句是: {sql}")
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    # 关闭数据库
+    cursor.close()
+    conn.close()
+
+    # 处理数据
+    data = []
+    for row in result:
+        data.append({
+            'temperature': row[1],
+            'humidity': row[2],
+            'ideal_temp': row[3],
+            'diff': row[4],
+            'timestamp': row[5]
+        })
+
+    return jsonify({
+        'status': 'ok',
+        'msg': '数据获取成功',
+        'data': data
+    }), 200
