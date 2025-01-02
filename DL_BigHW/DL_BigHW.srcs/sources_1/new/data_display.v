@@ -96,7 +96,7 @@ begin
     else // 零上
     begin
         if (temp > 250)
-            rgb_temp = 24'hFE706C; // 红色
+            rgb_temp = 24'hF4000F; // 红色
         else if (temp < 180)
             rgb_temp = 24'h24AEF0;
         else
@@ -107,7 +107,7 @@ begin
     if (humi > 700)
         rgb_humi = 24'h24AEF0; // 蓝色
     else if (humi < 400)
-        rgb_humi = 24'hFE706C; // 红色
+        rgb_humi = 24'hF4000F; // 红色
     else
         rgb_humi = 24'h3ECF7F; // 绿色
 end

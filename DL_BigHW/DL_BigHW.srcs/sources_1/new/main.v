@@ -98,8 +98,8 @@ begin
     case (state)
         IDLE:
         begin
-            oData = 8'b11111111;        // 空闲状态，数码管全灭
-            set = 8'b00000000;          //  ........
+            oData = 8'b01111111;        // 空闲状态，........
+            set = 8'b00000000;          // 选择所有
         end
         INIT_NETWORK:
         begin 

@@ -19,8 +19,8 @@ reg [31:0] clk_count;
 reg [39:0] iData = 40'h8CA748437C;       // 存放向数码管传输的数据 INIT .
 reg [7:0] isDot = 8'hAA;        // 存放小数点的情况
 reg rx_state;
-reg[2:0] state = IDLE;      // 位宽要和状态编码对应！！！
-reg[2:0] next_state;
+reg[3:0] state = IDLE;      // 位宽要和状态编码对应！！！
+reg[3:0] next_state;
 reg send_done = 0;          // 记录是否给 ESP32 发送了连接要求
 
 // 七段数码管的组合逻辑
@@ -33,9 +33,10 @@ combine_display7 uut (
     .set(set)
 );
 
-parameter IDLE = 3'b001;
-parameter SEND = 3'b010;
-parameter REC = 3'b100;
+parameter IDLE = 4'b0001;
+parameter SEND = 4'b0010;
+parameter REC = 4'b0100;
+parameter DONE = 4'b1000;
 
 // 波特率计数器
 reg [13:0] baud_counter = 14'd0;
@@ -49,24 +50,43 @@ reg [9:0] data_to_send = 10'b1100110010; // 发送 0x99 表示开始连接网络
 reg tx_reg = 1'b1;
 assign TX = tx_reg;
 
+// 第一段：状态寄存器
 always @(posedge clk)
 begin
-    if (net_able)
-    begin
-        if (send_done)
-        begin
-            state <= REC;
-        end
-        else
-        begin
-            state <= SEND;
-        end
-    end
-    else
-        state <= IDLE;
+    state <= next_state;
 end
 
-// 某状态操作
+// 第二段：组合逻辑计算下一状态
+always @(*)
+begin
+    next_state = state; // 默认保持当前状态
+    
+    case(state)
+        IDLE:
+        begin
+            if(net_able)
+                next_state = SEND;
+        end
+        SEND:
+        begin
+            if(send_done)
+                next_state = REC;
+        end
+        REC:
+        begin
+            if(net_done)
+                next_state = DONE;
+        end
+        DONE:
+        begin
+            ; // 空转
+        end
+        default:
+            next_state = IDLE;
+    endcase
+end
+
+// 第三段：状态输出
 always @(posedge clk)
 begin
     case (state)
@@ -77,10 +97,12 @@ begin
             send_done <= 1'b0;
             baud_counter <= 14'd0;
             bit_counter <= 4'b0;
-            isDot <= 8'h80;     // INIT .
+            iData = 40'h8CA748437C;
+            isDot <= 8'h08;     // INIT .
         end
         SEND:
         begin
+            iData = 40'h8CA748437C;
             isDot <= 8'h0C;     // INIT ..
             if (baud_counter < BIT_PERIOD - 1)
             begin
@@ -94,6 +116,8 @@ begin
                 if (bit_counter == 9) // 不要把条件判断和加法运算并列！
                 begin
                     send_done <= 1'b1;
+                    // iData = 40'h8CA748437C;
+                    iData = 40'h8CA748CA74;
                     isDot <= 8'h0E; // INIT ...
                     bit_counter <= 4'b0;
                 end
@@ -132,14 +156,16 @@ begin
                         if (rx_data == 8'h99)
                         begin
                             net_done <= 1'b1;
-                            iData <= 40'h8CA748437C; // INIT ..OK
+                            // iData <= 40'h8CA748437C; // INIT ..OK
+                            iData <= 40'h8437C8437C; // INIT ..OK
                             isDot <= 8'h00;
                         end
 
                         else // (rx_data == 8'hee) 其实只要不是 0x99 就是失败，不然恐怕有未定义行为
                         begin
                             net_done <= 1'b0;
-                            iData <= 40'h8CA74D7635; // INIT FAIL
+                            // iData <= 40'h8CA74D7635; // INIT FAIL
+                            iData <= 40'hD7635D7635; // INIT FAIL
                             isDot <= 8'h00;
                         end
                     end
@@ -153,6 +179,10 @@ begin
                 rx_state <= 0;
                 isDot <= 8'h00;
             end
+        end
+        DONE:
+        begin
+            ; // 空转
         end
     endcase
 end

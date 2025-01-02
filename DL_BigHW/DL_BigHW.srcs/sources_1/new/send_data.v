@@ -16,11 +16,12 @@ parameter CLOCK_RATE = 100_000_000; // 100MHz
 parameter BIT_PERIOD = CLOCK_RATE / BAUD_RATE; // 每传输一个bit所需的时钟周期
 
 // 状态编码
-parameter IDLE = 1'b0;
-parameter SEND = 1'b1;
+parameter [2:0] IDLE = 3'b001;
+parameter [2:0] SEND = 3'b010;
+parameter [2:0] DONE = 3'b100;
 
 // 状态寄存器
-reg state = IDLE;
+reg [2:0] state = IDLE;
 
 // 波特率计数器
 reg [13:0] baud_counter = 14'd0;
@@ -45,20 +46,13 @@ begin
             // 按照小端方式加载数据，并为每个字节添加起始位和停止位
             data_to_send <=
             {
-                // temp[15:8]
-                1'b1, temp[15:8], 1'b0,
-                // temp[7:0]
-                1'b1, temp[7:0], 1'b0,
-                // humi[15:8]
-                1'b1, humi[15:8], 1'b0,
-                // humi[7:0]
-                1'b1, humi[7:0], 1'b0,
-                // ideal_temp[15:8]
-                1'b1, ideal_temp[15:8], 1'b0,
-                // ideal_temp[7:0]
+                1'b1, temp_offset,1'b0,
                 1'b1, ideal_temp[7:0], 1'b0,
-                // temp_offset
-                1'b1, temp_offset, 1'b0
+                1'b1, ideal_temp[15:8], 1'b0,
+                1'b1, humi[7:0], 1'b0,
+                1'b1, humi[15:8], 1'b0,
+                1'b1, temp[7:0], 1'b0,
+                1'b1, temp[15:8], 1'b0
             };
             bit_counter <= 7'd0;
             baud_counter <= 14'd0;
@@ -75,15 +69,19 @@ begin
             else
             begin
                 baud_counter <= 14'd0;
-                // 发送当前位，低位先发送
                 tx_reg <= data_to_send[bit_counter];
                 bit_counter <= bit_counter + 1;
                 if(bit_counter == 7'd69)
                 begin
                     send_done <= 1'b1;
-                    state <= IDLE;
+                    state <= DONE;
                 end
             end
+        end
+        DONE:
+        begin
+            if(send_able)
+                state <= IDLE;
         end
     endcase
 end

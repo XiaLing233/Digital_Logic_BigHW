@@ -71,7 +71,7 @@ parameter START_LOW = 1000;                 // 1000us = 1ms
 parameter SLAVE_RESPONSE_1 = 80;            // 80us
 parameter SLAVE_RESPONSE_2 = 80;            // 80us
 parameter ZERO_ONE_DIVIDE = 40;             // 40us，留一些冗余，来判断 0 / 1
-parameter ERROR_RESTART = 1000000;          // 1s
+parameter ERROR_RESTART = 3000000;          // 3s
 
 // 计数器
 integer counter_start_high = 0;
@@ -100,14 +100,7 @@ reg [3:0] next_state;
 // 状态转移逻辑
 always @(posedge clk) // 同步复位
 begin
-    if (!start)
-    begin
-        state <= IDLE;
-    end
-    else
-    begin
-        state <= next_state;
-    end
+    state <= next_state;
 end
 
 // 状态转移条件
@@ -170,14 +163,12 @@ begin
             if (data_storage[39:32] + data_storage[31:24] + data_storage[23:16] + data_storage[15:8] == data_storage[7:0])
                 next_state = DONE;
             else
-            begin
                 next_state = ERROR;
-            end
-
         end
         DONE:
         begin
-            // 自己空转， start 信号控制
+            // if (start)
+                // next_state = IDLE; // 先归零，再重新开始
         end
         ERROR:
         begin
@@ -197,7 +188,7 @@ begin
             // temp <= 16'd123; // IDLE 的时候，保持原样不变
             // humi <= 16'd456;    // test
             data_storage <= 40'b0;
-            data_wire_out <= 1'b1;
+            data_wire_out <= 1'bz; // 这个不要是 1，高阻态好一点？或许
 
             // 这几个计数器要清零
             counter_start_high <= 0;
@@ -211,56 +202,53 @@ begin
         end
         START_HIGH_STATE:
         begin
-            // temp <= 16'd200; // IDLE 的时候，保持原样不变
-            // humi <= 16'd111;    // test
-            data_wire_out <= 1'b1;
+            temp <= 16'd200; // IDLE 的时候，保持原样不变
+            humi <= 16'd111;    // test
+            data_wire_out <= 1'bz;
             counter_start_high <= counter_start_high + 1;
         end
         START_LOW_STATE:
         begin
-            // temp <= 16'd233; // IDLE 的时候，保持原样不变
-            // humi <= 16'd333;    // test
+            temp <= 16'd233; // IDLE 的时候，保持原样不变
+            humi <= 16'd333;    // test
             data_wire_out <= 1'b0;
             counter_start_low <= counter_start_low + 1;
         end
         MASTER_RESPONSE_STATE:
         begin
-            // temp <= 16'd200; // IDLE 的时候，保持原样不变
-            // humi <= 16'd222;    // test
+            temp <= 16'd200; // IDLE 的时候，保持原样不变
+            humi <= 16'd222;    // test
             data_wire_out <= 1'bz;
         end
         SLAVE_RESPONSE_1_STATE:
         begin
-            // temp <= 16'd200; // IDLE 的时候，保持原样不变
-            // humi <= 16'd333;    // test
+            temp <= 16'd200; // IDLE 的时候，保持原样不变
+            humi <= 16'd333;    // test
             // counter_slave_response_1 <= counter_slave_response_1 + 1;
         end
         SLAVE_RESPONSE_2_STATE:
         begin
-            // temp <= 16'd200; // IDLE 的时候，保持原样不变
-            // humi <= 16'd444;    // test
+            temp <= 16'd200; // IDLE 的时候，保持原样不变
+            humi <= 16'd444;    // test
             // counter_slave_response_2 <= counter_slave_response_2 + 1;
         end
         READ_DATA:
         begin
-            // temp <= 16'd200; // IDLE 的时候，保持原样不变
-            // humi <= 16'd555;    // test
-            if (data_wire == 1'b0) // 每次到 0 的时候，处理一下之前读入的内容。当然要求 counter 非 0，排除第一个
+            temp <= 16'd200; // IDLE 的时候，保持原样不变
+            humi <= 16'd555;    // test
+            if (data_wire == 1'b0 && counter_zero_one_divide) // 如果是 0，并且没有处理过这一位
             begin
-                if (counter_zero_one_divide)
+                if (counter_zero_one_divide >= ZERO_ONE_DIVIDE)
                 begin
-                    if (counter_zero_one_divide >= ZERO_ONE_DIVIDE)
-                    begin
-                        data_storage[i] <= 1'b1;
-                        i <= i - 1;
-                        counter_zero_one_divide <= 0;
-                    end
-                    else
-                    begin
-                        data_storage[i] <= 1'b0;
-                        i <= i - 1;
-                        counter_zero_one_divide <= 0;
-                    end
+                    data_storage[i] <= 1'b1;
+                    i <= i - 1;
+                    counter_zero_one_divide <= 0;
+                end
+                else
+                begin
+                    data_storage[i] <= 1'b0;
+                    i <= i - 1;
+                    counter_zero_one_divide <= 0;
                 end
             end
             else // if (data_wire == 1'b1) 已经包含了所有情况
@@ -280,8 +268,8 @@ begin
         end
         ERROR:
         begin
-            // temp <= 16'd123; // IDLE 的时候，保持原样不变
-            // humi <= 16'd909;    // test
+            temp <= 16'd123; // IDLE 的时候，保持原样不变
+            humi <= 16'd909;    // test
             counter_error_restart <= counter_error_restart + 1;
         end
     endcase
