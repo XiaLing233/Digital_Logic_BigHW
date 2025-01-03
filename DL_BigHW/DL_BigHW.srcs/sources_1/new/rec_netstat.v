@@ -165,8 +165,8 @@ begin
                         else // (rx_data == 8'hee) 其实只要不是 0x99 就是失败，不然恐怕有未定义行为
                         begin
                             net_done <= 1'b0;
-                            // iData <= 40'h8CA74D7635; // INIT FAIL
-                            iData <= 40'hD7635D7635; // FAIL FAIL
+                            iData <= 40'h8CA74D7635; // INIT FAIL
+                            // iData <= 40'hD7635D7635; // FAIL FAIL
                             isDot <= 8'h00;
                         end
                     end

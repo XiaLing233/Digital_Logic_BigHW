@@ -22,6 +22,7 @@ module data_display(
 
 reg [39:0] iData; // 七段数码管的输入
 reg [15:0] abs_temp; // 温度的绝对值
+reg [15:0] modified_humi; // 修改后的湿度，去掉最高位，因为传感器不太对劲
 reg [23:0] rgb_temp;   // 三色灯的输入
 reg [23:0] rgb_humi;   // 三色灯的输入
 
@@ -82,9 +83,10 @@ begin
     end
 
     // 湿度
-    iData[14:10] = (humi / 100) % 10;
-    iData[9:5] = (humi / 10) % 10;
-    iData[4:0] = humi % 10;     
+    modified_humi = humi & 16'h7FFF; // 去掉最高位
+    iData[14:10] = (modified_humi / 100) % 10;
+    iData[9:5] = (modified_humi / 10) % 10;
+    iData[4:0] = modified_humi % 10;     
 end
 
 // 对三色灯的处理
@@ -92,23 +94,23 @@ always @(*)
 begin
     // 温度
     if (temp[15] == 1) // 零下
-        rgb_temp = 24'h24AEF0; // 蓝色
+        rgb_temp = 24'h2347BD; // 蓝色
     else // 零上
     begin
         if (temp > 250)
-            rgb_temp = 24'hF4000F; // 红色
+            rgb_temp = 24'hB30600; // 红色
         else if (temp < 180)
-            rgb_temp = 24'h24AEF0;
+            rgb_temp = 24'h2347BD; // 蓝色
         else
-            rgb_temp = 24'h3ECF7F; // 绿色
+            rgb_temp = 24'h29AF34; // 绿色
     end
 
     // 湿度
-    if (humi > 700)
-        rgb_humi = 24'h24AEF0; // 蓝色
-    else if (humi < 400)
-        rgb_humi = 24'hF4000F; // 红色
+    if (modified_humi > 700)
+        rgb_humi = 24'h2347BD; // 蓝色
+    else if (modified_humi < 400)
+        rgb_humi = 24'hB30600; // 红色
     else
-        rgb_humi = 24'h3ECF7F; // 绿色
+        rgb_humi = 24'h29AF34; // 绿色
 end
 endmodule

@@ -76,3 +76,6 @@ set_property PACKAGE_PIN V15 [get_ports send_done]
 set_property IOSTANDARD LVCMOS18 [get_ports start]
 set_property PACKAGE_PIN V10 [get_ports start]
 set_property PACKAGE_PIN J15 [get_ports rst]
+
+set_property IOSTANDARD LVCMOS18 [get_ports parity_wrong]
+set_property PACKAGE_PIN H17 [get_ports parity_wrong]

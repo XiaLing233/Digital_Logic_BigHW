@@ -139,7 +139,7 @@ export default {
                 date: this.selectedDate.format('YYYY-MM-DD'),
             };
             // console.log(req_data);
-            fetch('https://szlj.xialing.icu/api/data_get', {
+            fetch('/api/data_get', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,6 +150,7 @@ export default {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status === 'ok') {
+                    console.log(data);
                 this.temp_data = {
                     labels: data.data.map((item) => item.timestamp),
                     datasets: [

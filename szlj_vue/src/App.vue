@@ -4,7 +4,7 @@
       <div style="float: left;"><h1 style="color:#fff; display: inline-block; margin: 0"><ControlOutlined style="margin-right:8px; vertical-align: middle" />温湿度数据可视化</h1></div>
       <div style="float:inline-end; padding-top: 8px"><a href="https://github.com/XiaLing233/Digital_Logic_BigHW" target="_blank"><GithubFilled style="color:#fff; font-size: 40px;"/></a></div>
     </a-layout-header>
-  <a-layout style="height: calc(100vh - 170px);">
+  <a-layout style="min-height: calc(100vh - 170px);">
     <a-layout-sider width="200" style="background: #fff">
       <a-menu
         :default-selected-keys="['/']"

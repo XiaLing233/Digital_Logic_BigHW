@@ -5,7 +5,7 @@ import mysql.connector
 import logging
 import os
 from datetime import datetime
-import time
+import pytz
 
 app = Flask(__name__)
 
@@ -110,16 +110,39 @@ def data_store():
 
     # 判断是不是合法的来源
     if (device_name != "SZLJ_ESP32" or device_mac != "F0:24:F9:5A:A3:94"):
+        # 记录日志
+        LOGGER.info(f"非法来源: device_mac: {device_mac}, device_name: {device_name}")
         return jsonify({
             'status': 'fail',
             'msg': '非法来源'
         }), 403
     
     # 判断数据是否合法
-    if (temperature < -40 or temperature > 80 or humidity <= 0 or humidity >= 100):
+    verify_temperature = data['temperature']
+    if (verify_temperature & 0x8000): # 温度的最高位是 1，说明是负数，把最高位去掉，再乘以 -1
+        verify_temperature = (verify_temperature & 0x7FFF) * -1
+        if (verify_temperature <= -400):
+            # 记录日志
+            LOGGER.info(f"温度数据不合法: temperature: {temperature}, verify_temperature: {verify_temperature}")
+            return jsonify({
+                'status': 'fail',
+                'msg': '温度数据不合法'
+            }), 400
+    else: # 温度的最高位是 0，说明是正数
+        if (verify_temperature >= 800):
+            # 记录日志
+            LOGGER.info(f"温度数据不合法: temperature: {temperature}, verify_temperature: {verify_temperature}")
+            return jsonify({
+                'status': 'fail',
+                'msg': '温度数据不合法'
+            }), 400
+
+    if (humidity <= 0 or humidity >= 100): # 湿度是已经处理过的
+        # 记录日志
+        LOGGER.info(f"湿度数据不合法: humidity: {humidity}")
         return jsonify({
             'status': 'fail',
-            'msg': '数据不合法'
+            'msg': '湿度数据不合法'
         }), 400
 
     # 调试
@@ -132,14 +155,15 @@ def data_store():
     print("device_name: ", device_name)
 
     # 记录日志
-    LOGGER.info(f"temperature: {temperature}, humidity: {humidity}, ideal_temp: {ideal_temp}, diff: {diff}, device_mac: {device_mac}, device_ip: {device_ip}, device_name: {device_name}")
+    LOGGER.info(f"合法的：\ntemperature: {temperature}, humidity: {humidity}, ideal_temp: {ideal_temp}, diff: {diff}, device_mac: {device_mac}, device_ip: {device_ip}, device_name: {device_name}")
 
     # 连接数据库
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
 
-    # 获取当前时间
-    now = time.strftime('%Y-%m-%d %H:%M:%S')
+    # 获取当前时间（上海时区）
+    tz = pytz.timezone('Asia/Shanghai')
+    now = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
 
     # 插入数据
     sql = f"INSERT INTO {TABLE_NAME} ({TEMP}, {HUMI}, {IDEAL_TEMP}, {TEMP_DIFF}, {TIMESTAMP}) VALUES ({temperature}, {humidity}, {ideal_temp}, {diff}, '{now}')" # now 是字符串，所以要加引号
@@ -193,6 +217,9 @@ def data_get():
     data = request.json
     date = data['date']
 
+    # 记录日志
+    LOGGER.info(f"请求的日期: {date}")
+
     # 连接数据库
     conn = mysql.connector.connect(**DB_CONFIG_READ_ONLY)
     cursor = conn.cursor()
@@ -213,12 +240,15 @@ def data_get():
     # 处理数据
     data = []
     for row in result:
+        # Convert UTC timestamp to Shanghai timezone
+        tz = pytz.timezone('Asia/Shanghai')
+        local_time = row[5].astimezone(tz).strftime('%Y-%m-%d %H:%M:%S')
         data.append({
             'temperature': row[1],
             'humidity': row[2],
             'ideal_temp': row[3],
             'diff': row[4],
-            'timestamp': row[5]
+            'timestamp': local_time
         })
 
     return jsonify({

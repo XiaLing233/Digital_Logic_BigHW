@@ -44,7 +44,8 @@ module main(
     output net_done,                   // 网络初始化完毕的标志位，出现在 INIT_NETWORK 状态
     output set_done,                // 设定完毕的标志位，出现在 SET_TEMP 状态
     output get_data_done,                 // 温度传感器是否完成了一次读取，出现在 GET_DATA 状态
-    output send_done                 // 是否发送完毕，出现在 SEND_DATA 状态
+    output send_done,                 // 是否发送完毕，出现在 SEND_DATA 状态
+    output parity_wrong            // 传感器的校验位是否错误
 );
 
 // 定义状态
@@ -74,8 +75,8 @@ wire tmp_TX2;
 
 assign TX = net_done ? tmp_TX2 : tmp_TX1; // 根据状态选择 TX
 
-// parameter WAIT_TIME = 60000000; // 60s 的计数器
-parameter WAIT_TIME = 10000000; // 10s 的计数器
+// parameter WAIT_TIME = 60; // 60s 的计数器
+parameter WAIT_TIME = 10; // 10s 的计数器
 
 // 数据
 wire [15:0] temp, humi; // 温度和湿度
@@ -91,6 +92,9 @@ wire [7:0] oData_disp;   // From display module
 wire [7:0] set_net;    // From network status module
 wire [7:0] set_init;   // From init module  
 wire [7:0] set_disp;   // From display module
+
+// 分频的时钟
+wire wait_clk;
 
 // Select oData source based on current state
 always @(*)
@@ -154,7 +158,8 @@ combine_sensor u_sensor ( // 温湿度传感器模块
     .data_wire(data_wire),
     .temp(temp),
     .humi(humi),
-    .is_done(get_data_done)
+    .is_done(get_data_done),
+    .parity_wrong(parity_wrong)
 );
 
 data_display u_display ( // 数据显示模块
@@ -181,6 +186,11 @@ send_data u_send ( // 数据发送模块
     .temp_offset(temp_offset),
     .send_done(send_done),
     .TX(tmp_TX2)
+);
+
+main_divider u_divider ( // 时钟分频模块
+    .i_clk(clk),
+    .o_clk(wait_clk)
 );
 
 // 状态转移逻辑
@@ -244,10 +254,9 @@ begin
         WAIT:
         begin
             // 等待 60s，再次读取温湿度
-            if (counter == WAIT_TIME) // 如果计数器到 60s or 10s(调试)
+            if (counter >= WAIT_TIME) // 如果计数器到 60s or 10s(调试)
             begin
                 next_state = GET_DATA; // 转移到获取数据的状态
-                counter = 0; // 计数器清零
             end
         end
     endcase
@@ -276,6 +285,7 @@ begin
         GET_DATA:
         begin
             set_able <= 1'b0; // 禁用设定
+            send_able <= 1'b0; // 禁用发送
             get_data_able <= 1'b1; // 启用获取数据
         end
         SEND_DATA:
@@ -287,9 +297,47 @@ begin
         WAIT:
         begin
             send_able <= 1'b0; // 禁用发送
-            counter <= counter + 1; // 计数器加 1
         end
     endcase 
 end
 
+// 计数器
+always @(posedge wait_clk)
+begin
+    case (state)
+        WAIT:
+        begin
+            counter <= counter + 1;
+        end
+        default:
+        begin
+            counter <= 0;
+        end
+    endcase
+end
+
+endmodule
+
+
+// 对系统时钟分频
+module main_divider(
+    input i_clk,    // 100MHz 的输入
+    output reg o_clk    // 1Hz 的输出
+);
+
+parameter DIVIDE = 50000000; // 100MHz / 1Hz / 2 = 50000000 /2。算法是：原频率 / 新频率 / 2
+integer i = 0;
+
+always @ (posedge i_clk)
+begin
+    if (i == DIVIDE - 1)
+    begin
+        i <= 0;
+        o_clk <= ~o_clk;
+    end
+    else
+    begin
+        i <= i + 1;
+    end
+end
 endmodule

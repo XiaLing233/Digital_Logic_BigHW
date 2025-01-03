@@ -29,7 +29,7 @@
         background-image: url('../assets/welcome_bg_2.webp');
         background-size: cover;
         background-position: center;
-        height: calc(100vh - 160px);
+        height: 100%;
         width: 100%;
     }
 

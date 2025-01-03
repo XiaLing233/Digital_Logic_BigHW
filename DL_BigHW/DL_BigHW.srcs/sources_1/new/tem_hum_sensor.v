@@ -5,7 +5,8 @@ module combine_sensor(
     inout data_wire,
     output [15:0] temp,
     output [15:0] humi,
-    output is_done
+    output is_done,
+    output parity_wrong 
 );
 
 wire o_clk;
@@ -21,7 +22,8 @@ wire o_clk;
         .data_wire(data_wire),
         .temp(temp),
         .humi(humi),
-        .is_done(is_done)
+        .is_done(is_done),
+        .parity_wrong(parity_wrong)
     );
 
 endmodule
@@ -57,7 +59,8 @@ module tmp_hum_sensor(
     inout data_wire,        // 与传感器通信的数据线路
     output reg [15:0] temp, // 温度传输，不用下板到硬件，给主模块
     output reg [15:0] humi, // 湿度传输，不用下板到硬件，给主模块
-    output reg is_done = 1'b0      // 一次读取结束的信号，不用下板到硬件，给主模块。调试的时候可以绑个 led，但是我估计个数不够
+    output reg is_done = 1'b0,      // 一次读取结束的信号，不用下板到硬件，给主模块。调试的时候可以绑个 led，但是我估计个数不够
+    output reg parity_wrong = 1'b0
 );
 
 reg data_wire_out;                  // 控制数据线的输出信号，这样可以时序控制
@@ -70,8 +73,8 @@ parameter START_HIGH = 2000000;             // 2s
 parameter START_LOW = 1000;                 // 1000us = 1ms
 // parameter SLAVE_RESPONSE_1 = 80;            // 80us
 // parameter SLAVE_RESPONSE_2 = 80;            // 80us
-parameter ZERO_ONE_DIVIDE = 50;             // 45us，留一些冗余，来判断 0 / 1
-parameter ERROR_RESTART = 3000000;          // 3s
+parameter ZERO_ONE_DIVIDE = 45;             // 45us，留一些冗余，来判断 0 / 1
+parameter ERROR_RESTART = 2000000;          // 2s
 
 // 计数器
 integer counter_start_high = 0;
@@ -191,6 +194,7 @@ begin
             // humi <= 16'd456;    // test
             data_storage <= 40'b0;
             data_wire_out <= 1'bz;
+            parity_wrong <= 0;
 
             // 这几个计数器要清零
             counter_start_high <= 0;
@@ -239,25 +243,22 @@ begin
         begin
             // temp <= 16'd200; // IDLE 的时候，保持原样不变
             // humi <= 16'd555;    // test
-            if (data_wire == 1'b0) // 每次到 0 的时候，处理一下之前读入的内容。当然要求 counter 非 0，排除第一个
+            if (data_wire == 1'b0 && counter_zero_one_divide) // 每次到 0 的时候，处理一下之前读入的内容。当然要求 counter 非 0，排除第一个
             begin
-                if (counter_zero_one_divide)
+                if (counter_zero_one_divide >= ZERO_ONE_DIVIDE)
                 begin
-                    if (counter_zero_one_divide >= ZERO_ONE_DIVIDE)
-                    begin
-                        data_storage[i] <= 1'b1;
-                        i <= i - 1;
-                        counter_zero_one_divide <= 0;
-                    end
-                    else
-                    begin
-                        data_storage[i] <= 1'b0;
-                        i <= i - 1;
-                        counter_zero_one_divide <= 0;
-                    end
+                    data_storage[i] <= 1'b1;
+                    i <= i - 1;
+                    counter_zero_one_divide <= 0;
+                end
+                else
+                begin
+                    data_storage[i] <= 1'b0;
+                    i <= i - 1;
+                    counter_zero_one_divide <= 0;
                 end
             end
-            else // if (data_wire == 1'b1) 已经包含了所有情况
+            else if (data_wire == 1'b1) // 没有包含所有情况，需要显性指出条件
             begin
                 counter_zero_one_divide <= counter_zero_one_divide + 1;
             end
@@ -277,6 +278,7 @@ begin
             // temp <= 16'd123; // IDLE 的时候，保持原样不变
             // humi <= 16'd909;    // test
             counter_error_restart <= counter_error_restart + 1;
+            parity_wrong <= 1'b1;
         end
     endcase
 end
