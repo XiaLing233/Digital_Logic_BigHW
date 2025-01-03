@@ -98,6 +98,12 @@ LOGGER = setup_logger()
 '''
 @app.route('/api/data_store', methods=['POST'])
 def data_store():
+    # 本方法已弃用，不再使用
+    return jsonify({
+        'status': 'fail',
+        'msg': '本方法已弃用，不再接收数据'
+    }), 410
+
     # 获取 json 数据
     data = request.json
     temperature = data['temperature'] * 1.0 / 10        # 因为传入的是整数，所以要除以 10
@@ -143,6 +149,14 @@ def data_store():
         return jsonify({
             'status': 'fail',
             'msg': '湿度数据不合法'
+        }), 400
+
+    if (ideal_temp <= 0 or ideal_temp >= 80):
+        # 记录日志
+        LOGGER.info(f"理想温度数据不合法: ideal_temp: {ideal_temp}")
+        return jsonify({
+            'status': 'fail',
+            'msg': '理想温度数据不合法'
         }), 400
 
     # 调试
