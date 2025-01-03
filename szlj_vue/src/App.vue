@@ -38,14 +38,10 @@
 </template>
 
 <script>
-  import Table from './views/Table.vue';
-  import Welcome from './views/Welcome.vue';
   import { HomeOutlined, LineChartOutlined, GithubFilled, InfoCircleOutlined, ControlOutlined} from '@ant-design/icons-vue';
-  
+
   export default {
     components: {
-      Welcome,
-      Table,
       HomeOutlined,
       LineChartOutlined,
       GithubFilled,
