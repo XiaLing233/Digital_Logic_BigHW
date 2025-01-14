@@ -19,6 +19,49 @@
 
 本项目只实现第 1 点。
 
+## 硬件
+
+* Xilinx N4 开发板
+* ESP32 开发板（CH340）和数据线
+* DHT22 温湿度传感器
+* 杜邦线若干
+
+## 软件
+
+* Vivado 2016.2
+* Arduino IDE
+* VSCode
+
+## 项目结构说明
+
+```plaintext
+├── DL_BigHW                存放了 Verilog 文件
+│   ├── DL_BigHW.srcs       存放了源文件
+│   └── DL_BigHW.xpr        Vivado 项目文件
+│
+├── arduino                 存放了和 ESP32 有关的文件
+│   └── net_connect
+│       ├── net_connect.ino 存放了烧录给 ESP32 的代码
+│       └── config.h        配置文件，在 Git 中被忽略，其实就是一些全局常量的定义而已
+│
+├── flask                   和后端有关的文件
+│   ├── app.py              后端程序
+│   └── config.ini          配置文件，在 Git 中被忽略，按组+项的形式组织起来，常见的 ini 格式
+│
+└── szlj_vue                        vue 前端
+    └── src                         存放了核心源文件
+        ├── components              画图组件
+        │   └── MyLineChart.vue
+        ├── router                  router 路由
+        │   └── index.js
+        ├── views                   页面
+        │   ├── Info.vue
+        │   ├── Table.vue
+        │   └── Welcome.vue
+        ├── App.vue                 根
+        └── main.js                 基本配置
+```
+
 ## 模块
 
 ### 模块一：对理想温度的输入
@@ -341,36 +384,6 @@ npm install chartjs-adapter-dayjs-4 # 对时间的处理，可能还安装了 da
 1. 红外遥控
 2. 自启动
 3. 登录查看？那是计科导的事儿
-
-## 项目结构说明
-
-```plaintext
-├── DL_BigHW                存放了 Verilog 文件
-│   ├── DL_BigHW.srcs       存放了源文件
-│   └── DL_BigHW.xpr        Vivado 项目文件
-│
-├── arduino                 存放了和 ESP32 有关的文件
-│   └── net_connect
-│       ├── net_connect.ino 存放了烧录给 ESP32 的代码
-│       └── config.h        配置文件，在 Git 中被忽略，其实就是一些全局常量的定义而已
-│
-├── flask                   和后端有关的文件
-│   ├── app.py              后端程序
-│   └── config.ini          配置文件，在 Git 中被忽略，按组+项的形式组织起来，常见的 ini 格式
-│
-└── szlj_vue                        vue 前端
-    └── src                         存放了核心源文件
-        ├── components              画图组件
-        │   └── MyLineChart.vue
-        ├── router                  router 路由
-        │   └── index.js
-        ├── views                   页面
-        │   ├── Info.vue
-        │   ├── Table.vue
-        │   └── Welcome.vue
-        ├── App.vue                 根
-        └── main.js                 基本配置
-```
 
 ## 更多内容
 
