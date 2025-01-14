@@ -10,7 +10,7 @@
 #if IS_HTTPS
 const char* BACKEND_HOST = "https://szlj.xialing.icu/api/data_store";
 #else
-const char* BACKEND_HOST = "http://localhost:8000/api/data_store";
+const char* BACKEND_HOST = "http://localhost:8000/api/data_store"; // 没用，因为连接的是学校网络，怎么 localhost 到本机呢?
 #endif
 
 // 和开发板连接的串口的设置 这里使用 UART2，参见
